@@ -1,0 +1,65 @@
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+body { background-color: #f4f4f4; padding-bottom: 80px; }
+
+/* HEADER */
+.main-header {
+    width: 100%; height: 250px;
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('logo.png');
+    background-size: cover; background-position: center;
+    display: flex; justify-content: center; align-items: center; color: white; text-align: center;
+}
+
+/* CATEGORIAS */
+.categories { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: #fff; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #eee; }
+.category-btn { padding: 10px 20px; border: none; border-radius: 25px; background: #f0f0f0; font-weight: bold; cursor: pointer; white-space: nowrap; }
+.category-btn.active { background: #111; color: #fff; }
+
+/* PRODUTOS NA VITRINE */
+.products { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding: 20px; }
+.product { background: #fff; border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.product img { width: 100%; height: 230px; object-fit: cover; border-radius: 18px 18px 0 0; display: block; }
+.product h3 { padding: 15px 15px 5px; font-weight: 800; font-size: 1.3rem; }
+.product p { padding: 0 15px 15px; font-size: 0.9rem; color: #666; flex-grow: 1; }
+.product-footer { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; }
+.product-footer span { font-size: 1.4rem; font-weight: 800; color: #27ae60; }
+
+/* BOTÕES DA VITRINE */
+.add-btn, .remove-btn { width: 38px; height: 38px; border-radius: 50%; border: none; color: white; cursor: pointer; font-size: 1.2rem; }
+.add-btn { background: #2ecc71; }
+.remove-btn { background: #e74c3c; }
+
+/* CARRINHO (SACOLA) */
+.floating-cart { position: fixed; bottom: 25px; right: 20px; width: 65px; height: 65px; background: #111; color: white; border-radius: 50%; border: none; z-index: 99; }
+#cart-count { position: absolute; top: 0; right: 0; background: #ff4500; width: 24px; height: 24px; border-radius: 50%; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
+
+.cart { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #f8f9fa; z-index: 100; transition: 0.4s; display: flex; flex-direction: column; }
+.cart.open { right: 0; }
+.cart-header { padding: 20px; background: #111; color: white; display: flex; justify-content: space-between; align-items: center; }
+
+.cart-scrollable-content { flex: 1; overflow-y: auto; padding: 15px; }
+
+/* NOVOS CARDS DE ITEM NO CARRINHO */
+.cart-item-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.cart-item-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.cart-item-text { display: flex; flex-direction: column; }
+.cart-item-price { font-size: 0.9rem; color: #666; }
+
+/* NOVOS BOTÕES DE + E - DENTRO DO CARRINHO */
+.cart-item-controls { display: flex; align-items: center; gap: 12px; }
+.qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #ddd; background: #f8f8f8; color: #333; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.qty-num { font-weight: bold; font-size: 1rem; }
+
+/* NOVA BARRA DE OBSERVAÇÃO */
+.obs-input { width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fdfdfd; font-size: 0.85rem; color: #333; outline: none; }
+
+/* CAMPOS DE ENDEREÇO */
+.cart-section-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.input-row { display: flex; gap: 10px; margin-top: 8px; }
+.input-row input:first-child { flex: 1; }
+.input-row input:last-child { flex: 2; }
+.cart-section-card input, .cart-section-card select { width: 100%; padding: 12px; margin-top: 8px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; }
+
+/* FOOTER */
+.cart-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; }
+.finish-btn { width: 100%; padding: 18px; background: #27ae60; color: white; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; }
