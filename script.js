@@ -61,7 +61,6 @@ function renderProducts() {
 
 function filterCategory(cat) {
   currentCategory = cat;
-  // Correção na lógica de ativar o botão
   document.querySelectorAll(".category-btn").forEach(btn => {
     const btnText = btn.getAttribute("onclick").match(/'([^']+)'/)[1];
     btn.classList.toggle("active", btnText === cat);
@@ -91,6 +90,7 @@ function updateObs(id, val) {
   if (item) item.obs = val;
 }
 
+// FUNÇÃO ATUALIZADA COM BOTÕES COLORIDOS NA SACOLA
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
   if (!itemsDiv) return;
@@ -101,10 +101,22 @@ function updateCart() {
     subtotal += item.price * item.qty;
     itemsDiv.innerHTML += `
       <div class="cart-item-card">
-        <strong>${item.qty}x ${item.name}</strong>
-        <input type="text" placeholder="Observações..."
-          value="${item.obs}"
-          oninput="updateObs(${item.id}, this.value)">
+        <div class="cart-item-info">
+          <strong>${item.name}</strong>
+          <span>R$ ${(item.price * item.qty).toFixed(2)}</span>
+        </div>
+        
+        <div class="cart-item-controls">
+          <input type="text" placeholder="Observações..."
+            value="${item.obs}"
+            oninput="updateObs(${item.id}, this.value)">
+          
+          <div class="qty-controls">
+            <button class="remove-btn-cart" onclick="removeFromCart(${item.id})">−</button>
+            <span class="qty-number">${item.qty}</span>
+            <button class="add-btn-cart" onclick="addToCart(${item.id})">+</button>
+          </div>
+        </div>
       </div>`;
   });
 
@@ -169,5 +181,4 @@ function finishOrder() {
   window.open(`https://wa.me/5543988230563?text=${msg}`);
 }
 
-// Inicia a renderização
 renderProducts();
