@@ -26,7 +26,6 @@ const productsData = [
 let cart = [];
 let currentCategory = "tradicionais";
 
-// Função para mostrar aviso de Adicionado/Removido
 function showToast(message, type = "success") {
     const oldToast = document.querySelector(".toast-msg");
     if (oldToast) oldToast.remove();
@@ -41,8 +40,19 @@ function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
   container.innerHTML = "";
-  const filtered = productsData.filter(p => p.category === currentCategory);
   
+  const filtered = productsData.filter(p => p.category === currentCategory);
+
+  // TELA DE EM BREVE PARA CATEGORIAS VAZIAS (EX: COMBOS)
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 50px; background: #fff; border-radius: 15px; margin: 20px;">
+        <h2 style="color: #333;">🍔 Em breve...</h2>
+        <p style="color: #666; margin-top: 10px;">Estamos preparando combos incríveis para você!</p>
+      </div>`;
+    return;
+  }
+
   filtered.forEach(p => {
     container.innerHTML += `
       <div class="product">
@@ -63,8 +73,9 @@ function renderProducts() {
 function filterCategory(cat) {
   currentCategory = cat;
   document.querySelectorAll(".category-btn").forEach(btn => {
-    const btnText = btn.getAttribute("onclick").match(/'([^']+)'/)[1];
-    btn.classList.toggle("active", btnText === cat);
+    // Pegamos o texto do atributo onclick para comparar
+    const btnOnClick = btn.getAttribute("onclick");
+    btn.classList.toggle("active", btnOnClick.includes(`'${cat}'`));
   });
   renderProducts();
 }
@@ -138,20 +149,19 @@ function toggleTrocoField() {
   document.getElementById("troco-field").style.display = isDinheiro ? "block" : "none";
 }
 
-// FUNÇÃO ATUALIZADA COM CÓDIGOS ESPECIAIS PARA IPHONE (WHATSAPP)
+// FINALIZAR PEDIDO COM TRATAMENTO ESPECIAL PARA EMOJIS (IPHONE)
 function finishOrder() {
   if (cart.length === 0) return alert("Sua sacola está vazia!");
   
   const deliveryType = document.getElementById("delivery-type").value;
   const paymentMethod = document.getElementById("payment-method").value;
   
-  // Códigos hexadecimais para emojis (Mais seguro para iOS)
-  let msg = `%F0%9F%8D%94 *NOVO PEDIDO - LC BURGERS*%0A%0A`;
+  let textoFinal = `🍔 *NOVO PEDIDO - LC BURGERS*\n\n`;
   
   cart.forEach(i => {
-    msg += `%E2%9C%85 *${i.qty}x ${i.name}*%0A`;
-    if (i.obs) msg += `%F0%9F%93%9D _Obs: ${i.obs}_%0A`;
-    msg += `%0A`;
+    textoFinal += `✅ *${i.qty}x ${i.name}*\n`;
+    if (i.obs) textoFinal += `📝 _Obs: ${i.obs}_\n`;
+    textoFinal += `\n`;
   });
 
   if (deliveryType === "entrega") {
@@ -163,22 +173,26 @@ function finishOrder() {
 
     if(!rua || !num) return alert("Por favor, preencha o endereço de entrega!");
     
-    msg += `%F0%9F%93%8D *Entrega:*%0A`;
-    msg += `${rua}, ${num} - ${bairro}%0A`;
-    msg += `%F0%9F%8F%A2 *Tipo:* ${homeType}%0A`;
-    if(ref) msg += `%F0%9F%97%BA%EF%B8%8F *Ref:* ${ref}%0A`;
+    textoFinal += `📍 *Entrega:*\n`;
+    textoFinal += `${rua}, ${num} - ${bairro}\n`;
+    textoFinal += `🏠 *Tipo:* ${homeType}\n`;
+    if(ref) textoFinal += `🗺️ *Ref:* ${ref}\n`;
   } else {
-    msg += `%F0%9F%8F%AA *Retirada no Balcão*%0A`;
+    textoFinal += `🏪 *Retirada no Balcão*\n`;
   }
 
-  msg += `%0A%F0%9F%92%B3 *Pagamento:* ${paymentMethod}%0A`;
+  textoFinal += `\n💳 *Pagamento:* ${paymentMethod}\n`;
   
   const subtotal = cart.reduce((a, b) => a + b.price * b.qty, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
   
-  msg += `%F0%9F%92%B0 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
+  textoFinal += `💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
   
-  window.open(`https://wa.me/5543988230563?text=${msg}`);
+  // A mágica para iPhone: encodeURIComponent transforma o emoji em algo que o link entende sem erro
+  const mensagemCodificada = encodeURIComponent(textoFinal);
+  const fone = "5543988230563";
+  
+  window.open(`https://wa.me/${fone}?text=${mensagemCodificada}`);
 }
 
 document.addEventListener("DOMContentLoaded", renderProducts);
