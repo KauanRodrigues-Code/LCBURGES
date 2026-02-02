@@ -125,11 +125,13 @@ function updateCart() {
 }
 
 function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
+
 function toggleDeliveryFields() {
   const isEntrega = document.getElementById("delivery-type").value === "entrega";
   document.getElementById("address-fields").style.display = isEntrega ? "block" : "none";
   updateCart();
 }
+
 function toggleTrocoField() {
   const isDinheiro = document.getElementById("payment-method").value === "Dinheiro";
   document.getElementById("troco-field").style.display = isDinheiro ? "block" : "none";
@@ -137,25 +139,42 @@ function toggleTrocoField() {
 
 function finishOrder() {
   if (cart.length === 0) return alert("Sua sacola está vazia!");
+  
   const deliveryType = document.getElementById("delivery-type").value;
   const paymentMethod = document.getElementById("payment-method").value;
-  let msg = `*NOVO PEDIDO - LC BURGERS*%0A%0A`;
+  
+  let msg = `🍔 *NOVO PEDIDO - LC BURGERS*%0A%0A`;
+  
   cart.forEach(i => {
-    msg += `*${i.qty}x ${i.name}*%0A`;
-    if (i.obs) msg += `_Obs: ${i.obs}_%0A`;
+    msg += `✅ *${i.qty}x ${i.name}*%0A`;
+    if (i.obs) msg += `📝 _Obs: ${i.obs}_%0A`;
     msg += `%0A`;
   });
+
   if (deliveryType === "entrega") {
     const rua = document.getElementById("cart-rua").value;
     const num = document.getElementById("cart-numero").value;
     const bairro = document.getElementById("cart-vila").value;
+    const homeType = document.getElementById("home-type").value;
+    const ref = document.getElementById("cart-ponto-ref").value;
+
     if(!rua || !num) return alert("Por favor, preencha o endereço de entrega!");
-    msg += `*📍 Entrega:* ${rua}, ${num} - ${bairro}%0A`;
-  } else { msg += `*🏪 Retirada no Balcão*%0A`; }
-  msg += `%0A*💳 Pagamento:* ${paymentMethod}%0A`;
+    
+    msg += `📍 *Entrega:*%0A`;
+    msg += `${rua}, ${num} - ${bairro}%0A`;
+    msg += `🏢 *Tipo:* ${homeType}%0A`;
+    if(ref) msg += `🗺️ *Ref:* ${ref}%0A`;
+  } else {
+    msg += `🏪 *Retirada no Balcão*%0A`;
+  }
+
+  msg += `%0A💳 *Pagamento:* ${paymentMethod}%0A`;
+  
   const subtotal = cart.reduce((a, b) => a + b.price * b.qty, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
-  msg += `%0A*💰 Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
+  
+  msg += `💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
+  
   window.open(`https://wa.me/5543988230563?text=${msg}`);
 }
 
