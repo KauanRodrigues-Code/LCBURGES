@@ -26,23 +26,22 @@ const productsData = [
 let cart = [];
 let currentCategory = "tradicionais";
 
-// Renderiza os produtos na tela principal
+function showToast(message, type = "success") {
+    const oldToast = document.querySelector(".toast-msg");
+    if (oldToast) oldToast.remove();
+    const toast = document.createElement("div");
+    toast.className = `toast-msg ${type === "success" ? "toast-success" : "toast-error"}`;
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 2000);
+}
+
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
   container.innerHTML = "";
-  
   const filtered = productsData.filter(p => p.category === currentCategory);
-
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #666;">
-        <h2>🍔 Em breve novidades...</h2>
-        <p>Estamos preparando combos incríveis para você!</p>
-      </div>`;
-    return;
-  }
-
+  
   filtered.forEach(p => {
     container.innerHTML += `
       <div class="product">
@@ -60,7 +59,6 @@ function renderProducts() {
   });
 }
 
-// Filtra as categorias (Tradicionais, Gourmets, etc)
 function filterCategory(cat) {
   currentCategory = cat;
   document.querySelectorAll(".category-btn").forEach(btn => {
@@ -70,32 +68,31 @@ function filterCategory(cat) {
   renderProducts();
 }
 
-// Adiciona item ao carrinho
 function addToCart(id) {
   const product = productsData.find(p => p.id === id);
   const item = cart.find(i => i.id === id);
   if (item) item.qty++;
   else cart.push({ ...product, qty: 1, obs: "" });
   updateCart();
+  showToast(`${product.name} adicionado!`, "success");
 }
 
-// Remove item ou diminui quantidade
 function removeFromCart(id) {
   const index = cart.findIndex(i => i.id === id);
   if (index > -1) {
+    const itemName = cart[index].name;
     cart[index].qty--;
     if (cart[index].qty <= 0) cart.splice(index, 1);
+    updateCart();
+    showToast(`${itemName} removido!`, "error");
   }
-  updateCart();
 }
 
-// Atualiza a observação do item
 function updateObs(id, val) {
   const item = cart.find(i => i.id === id);
   if (item) item.obs = val;
 }
 
-// Atualiza visualmente a Sacola (Carrinho)
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
   if (!itemsDiv) return;
@@ -107,16 +104,12 @@ function updateCart() {
     itemsDiv.innerHTML += `
       <div class="cart-item-card">
         <div class="cart-item-info">
-          <div class="cart-item-text">
-            <strong>${item.name}</strong>
-          </div>
-          <span class="cart-item-price">R$ ${(item.price * item.qty).toFixed(2)}</span>
+          <strong>${item.name}</strong>
+          <span style="color: #27ae60; font-weight: bold;">R$ ${(item.price * item.qty).toFixed(2)}</span>
         </div>
-        
-        <input type="text" class="obs-input" placeholder="Alguma observação? (ex: sem cebola)"
+        <input type="text" class="obs-input" placeholder="Observações (ex: sem cebola)"
           value="${item.obs || ''}"
           oninput="updateObs(${item.id}, this.value)">
-          
         <div class="cart-item-controls">
           <button class="qty-btn-cart minus" onclick="removeFromCart(${item.id})">−</button>
           <span class="qty-num">${item.qty}</span>
@@ -127,79 +120,43 @@ function updateCart() {
 
   const deliveryType = document.getElementById("delivery-type").value;
   const delivery = deliveryType === "entrega" ? 5 : 0;
-  
   document.getElementById("cart-count").innerText = cart.reduce((a, b) => a + b.qty, 0);
-  document.getElementById("cart-total").innerHTML =
-    `<h3>Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
+  document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
 }
 
-// Abre/Fecha a sacola
-function toggleCart() {
-  document.getElementById("cart").classList.toggle("open");
-}
-
-// Controla exibição dos campos de endereço
+function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
 function toggleDeliveryFields() {
   const isEntrega = document.getElementById("delivery-type").value === "entrega";
   document.getElementById("address-fields").style.display = isEntrega ? "block" : "none";
   updateCart();
 }
-
-// Controla exibição do campo de troco
 function toggleTrocoField() {
   const isDinheiro = document.getElementById("payment-method").value === "Dinheiro";
   document.getElementById("troco-field").style.display = isDinheiro ? "block" : "none";
 }
 
-// Finaliza o pedido e envia para o WhatsApp
 function finishOrder() {
   if (cart.length === 0) return alert("Sua sacola está vazia!");
-
   const deliveryType = document.getElementById("delivery-type").value;
   const paymentMethod = document.getElementById("payment-method").value;
-  
   let msg = `*NOVO PEDIDO - LC BURGERS*%0A%0A`;
-  
   cart.forEach(i => {
     msg += `*${i.qty}x ${i.name}*%0A`;
     if (i.obs) msg += `_Obs: ${i.obs}_%0A`;
     msg += `%0A`;
   });
-
   if (deliveryType === "entrega") {
     const rua = document.getElementById("cart-rua").value;
     const num = document.getElementById("cart-numero").value;
     const bairro = document.getElementById("cart-vila").value;
-    const ref = document.getElementById("cart-ponto-ref").value;
-    const tipoMoradia = document.getElementById("home-type").value;
-
     if(!rua || !num) return alert("Por favor, preencha o endereço de entrega!");
-    
-    msg += `*📍 Entrega:*%0A`;
-    msg += `${rua}, ${num} - ${bairro}%0A`;
-    msg += `(${tipoMoradia})%0A`;
-    if(ref) msg += `Ref: ${ref}%0A`;
-  } else {
-    msg += `*🏪 Retirada no Balcão*%0A`;
-  }
-
+    msg += `*📍 Entrega:* ${rua}, ${num} - ${bairro}%0A`;
+  } else { msg += `*🏪 Retirada no Balcão*%0A`; }
   msg += `%0A*💳 Pagamento:* ${paymentMethod}%0A`;
-  if (paymentMethod === "Dinheiro") {
-    const troco = document.getElementById("cart-troco").value;
-    if(troco) msg += `*Troco para:* ${troco}%0A`;
-  }
-
   const subtotal = cart.reduce((a, b) => a + b.price * b.qty, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
-
   msg += `%0A*💰 Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
-  
-  // Substitua pelo seu número de WhatsApp
-  const fone = "5543988230563"; 
-  window.open(`https://wa.me/${fone}?text=${msg}`);
+  window.open(`https://wa.me/5543988230563?text=${msg}`);
 }
 
-// Inicializa a vitrine ao carregar a página
-document.addEventListener("DOMContentLoaded", () => {
-    renderProducts();
-});
+document.addEventListener("DOMContentLoaded", renderProducts);
