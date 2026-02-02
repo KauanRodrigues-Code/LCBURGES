@@ -26,6 +26,7 @@ const productsData = [
 let cart = [];
 let currentCategory = "tradicionais";
 
+// Função para mostrar aviso de Adicionado/Removido
 function showToast(message, type = "success") {
     const oldToast = document.querySelector(".toast-msg");
     if (oldToast) oldToast.remove();
@@ -137,17 +138,19 @@ function toggleTrocoField() {
   document.getElementById("troco-field").style.display = isDinheiro ? "block" : "none";
 }
 
+// FUNÇÃO ATUALIZADA COM CÓDIGOS ESPECIAIS PARA IPHONE (WHATSAPP)
 function finishOrder() {
   if (cart.length === 0) return alert("Sua sacola está vazia!");
   
   const deliveryType = document.getElementById("delivery-type").value;
   const paymentMethod = document.getElementById("payment-method").value;
   
-  let msg = `🍔 *NOVO PEDIDO - LC BURGERS*%0A%0A`;
+  // Códigos hexadecimais para emojis (Mais seguro para iOS)
+  let msg = `%F0%9F%8D%94 *NOVO PEDIDO - LC BURGERS*%0A%0A`;
   
   cart.forEach(i => {
-    msg += `✅ *${i.qty}x ${i.name}*%0A`;
-    if (i.obs) msg += `📝 _Obs: ${i.obs}_%0A`;
+    msg += `%E2%9C%85 *${i.qty}x ${i.name}*%0A`;
+    if (i.obs) msg += `%F0%9F%93%9D _Obs: ${i.obs}_%0A`;
     msg += `%0A`;
   });
 
@@ -160,20 +163,20 @@ function finishOrder() {
 
     if(!rua || !num) return alert("Por favor, preencha o endereço de entrega!");
     
-    msg += `📍 *Entrega:*%0A`;
+    msg += `%F0%9F%93%8D *Entrega:*%0A`;
     msg += `${rua}, ${num} - ${bairro}%0A`;
-    msg += `🏢 *Tipo:* ${homeType}%0A`;
-    if(ref) msg += `🗺️ *Ref:* ${ref}%0A`;
+    msg += `%F0%9F%8F%A2 *Tipo:* ${homeType}%0A`;
+    if(ref) msg += `%F0%9F%97%BA%EF%B8%8F *Ref:* ${ref}%0A`;
   } else {
-    msg += `🏪 *Retirada no Balcão*%0A`;
+    msg += `%F0%9F%8F%AA *Retirada no Balcão*%0A`;
   }
 
-  msg += `%0A💳 *Pagamento:* ${paymentMethod}%0A`;
+  msg += `%0A%F0%9F%92%B3 *Pagamento:* ${paymentMethod}%0A`;
   
   const subtotal = cart.reduce((a, b) => a + b.price * b.qty, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
   
-  msg += `💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
+  msg += `%F0%9F%92%B0 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
   
   window.open(`https://wa.me/5543988230563?text=${msg}`);
 }
