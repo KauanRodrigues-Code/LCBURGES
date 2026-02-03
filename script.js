@@ -43,7 +43,6 @@ function renderProducts() {
   
   const filtered = productsData.filter(p => p.category === currentCategory);
 
-  // TELA DE EM BREVE PARA CATEGORIAS VAZIAS (EX: COMBOS)
   if (filtered.length === 0) {
     container.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 50px; background: #fff; border-radius: 15px; margin: 20px;">
@@ -73,7 +72,6 @@ function renderProducts() {
 function filterCategory(cat) {
   currentCategory = cat;
   document.querySelectorAll(".category-btn").forEach(btn => {
-    // Pegamos o texto do atributo onclick para comparar
     const btnOnClick = btn.getAttribute("onclick");
     btn.classList.toggle("active", btnOnClick.includes(`'${cat}'`));
   });
@@ -149,14 +147,14 @@ function toggleTrocoField() {
   document.getElementById("troco-field").style.display = isDinheiro ? "block" : "none";
 }
 
-// FINALIZAR PEDIDO COM TRATAMENTO ESPECIAL PARA EMOJIS (IPHONE)
 function finishOrder() {
   if (cart.length === 0) return alert("Sua sacola está vazia!");
   
   const deliveryType = document.getElementById("delivery-type").value;
   const paymentMethod = document.getElementById("payment-method").value;
   
-  let textoFinal = `🍔 *NOVO PEDIDO - LC BURGERS*\n\n`;
+  // Usando emojis normais. O segredo é o encodeURI no final.
+  let textoFinal = "🍔 *NOVO PEDIDO - LC BURGERS*\n\n";
   
   cart.forEach(i => {
     textoFinal += `✅ *${i.qty}x ${i.name}*\n`;
@@ -188,11 +186,11 @@ function finishOrder() {
   
   textoFinal += `💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
   
-  // A mágica para iPhone: encodeURIComponent transforma o emoji em algo que o link entende sem erro
-  const mensagemCodificada = encodeURIComponent(textoFinal);
   const fone = "5543988230563";
+  // Usando encodeURI para garantir que o iOS entenda os emojis normais
+  const linkWhatsApp = `https://wa.me/${fone}?text=${encodeURIComponent(textoFinal)}`;
   
-  window.open(`https://wa.me/${fone}?text=${mensagemCodificada}`);
+  window.open(linkWhatsApp);
 }
 
 document.addEventListener("DOMContentLoaded", renderProducts);
