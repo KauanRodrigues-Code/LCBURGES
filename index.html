@@ -27,20 +27,14 @@
 <div id="product-modal" class="modal-overlay">
   <div class="modal-content">
     <button class="close-modal" onclick="closeModal()">✕</button>
-    
-    <div id="modal-details">
-      </div>
-
+    <div id="modal-details"></div>
     <div class="modal-options">
       <h3>Adicionais</h3>
-      <div id="modal-extras">
-        </div>
-
+      <div id="modal-extras"></div>
       <h3>Observações</h3>
       <textarea id="modal-obs" placeholder="Ex: Tirar cebola, ponto da carne, etc."></textarea>
     </div>
-
-    <div class="modal-footer-btn">
+    <div class="modal-footer">
       <button id="add-to-cart-btn" class="finish-btn">Adicionar à Sacola</button>
     </div>
   </div>
@@ -58,7 +52,6 @@
 
   <div class="cart-scrollable-content">
     <div class="cart-items" id="cart-items"></div>
-
     <div class="cart-extra-fields">
         <div class="cart-section-card">
             <h3>📍 Entrega</h3>
@@ -66,7 +59,6 @@
                 <option value="entrega">Preciso de Entrega (Taxa R$ 5,00)</option>
                 <option value="retirada">Vou retirar no Balcão</option>
             </select>
-
             <div id="address-fields">
                 <input type="text" id="cart-rua" placeholder="Nome da Rua">
                 <div class="input-row">
@@ -80,7 +72,6 @@
                 <input type="text" id="cart-ponto-ref" placeholder="Ponto de referência">
             </div>
         </div>
-
         <div class="cart-section-card">
             <h3>💳 Pagamento</h3>
             <select id="payment-method" onchange="toggleTrocoField()">
@@ -88,7 +79,6 @@
                 <option value="Cartão">Cartão (Maquininha)</option>
                 <option value="Dinheiro">Dinheiro</option>
             </select>
-            
             <div id="troco-field" style="display: none; margin-top: 10px;">
                 <input type="text" id="cart-troco" placeholder="Troco para quanto?">
             </div>
