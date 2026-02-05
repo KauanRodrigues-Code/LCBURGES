@@ -24,28 +24,17 @@ const productsData = [
 ];
 
 const extrasData = [
-    { name: "Frango Empanado", price: 12.00 },
-    { name: "Hambúrguer de Linguiça", price: 10.00 },
-    { name: "Hambúrguer Tradicional", price: 8.00 },
-    { name: "Hambúrguer Gourmet", price: 10.00 },
-    { name: "Cheddar", price: 4.00 },
-    { name: "Queijo Mussarela", price: 3.00 },
-    { name: "Queijo Coalho", price: 5.00 },
-    { name: "Queijo Coalho c/ Mel", price: 6.00 },
-    { name: "Calabresa", price: 6.00 },
-    { name: "Maionese C.", price: 2.00 },
-    { name: "Cebola", price: 2.00 },
-    { name: "Ovo", price: 4.00 },
-    { name: "Bacon", price: 6.00 },
-    { name: "Batata Palha", price: 3.00 },
-    { name: "Requeijão", price: 4.00 },
-    { name: "Barbecue", price: 4.00 },
-    { name: "Alface", price: 2.00 },
-    { name: "Tomate", price: 2.00 },
-    { name: "Vinagrete", price: 3.00 },
-    { name: "Doritos", price: 5.00 },
-    { name: "Geleia", price: 3.00 },
-    { name: "Cebola Caramelizada", price: 5.00 },
+    { name: "Frango Empanado", price: 12.00 }, { name: "Hambúrguer de Linguiça", price: 10.00 },
+    { name: "Hambúrguer Tradicional", price: 8.00 }, { name: "Hambúrguer Gourmet", price: 10.00 },
+    { name: "Cheddar", price: 4.00 }, { name: "Queijo Mussarela", price: 3.00 },
+    { name: "Queijo Coalho", price: 5.00 }, { name: "Queijo Coalho c/ Mel", price: 6.00 },
+    { name: "Calabresa", price: 6.00 }, { name: "Maionese C.", price: 2.00 },
+    { name: "Cebola", price: 2.00 }, { name: "Ovo", price: 4.00 },
+    { name: "Bacon", price: 6.00 }, { name: "Batata Palha", price: 3.00 },
+    { name: "Requeijão", price: 4.00 }, { name: "Barbecue", price: 4.00 },
+    { name: "Alface", price: 2.00 }, { name: "Tomate", price: 2.00 },
+    { name: "Vinagrete", price: 3.00 }, { name: "Doritos", price: 5.00 },
+    { name: "Geleia", price: 3.00 }, { name: "Cebola Caramelizada", price: 5.00 },
     { name: "Abacaxi", price: 5.00 }
 ];
 
@@ -53,31 +42,41 @@ let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
-function showToast(message, type = "success") {
-    const oldToast = document.querySelector(".toast-msg");
-    if (oldToast) oldToast.remove();
-    const toast = document.createElement("div");
-    toast.className = `toast-msg ${type === "success" ? "toast-success" : "toast-error"}`;
-    toast.innerText = message;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.remove(); }, 2000);
+// FUNÇÃO PARA FILTRAR POR CATEGORIA (CHAMADA PELOS BOTÕES DO HTML)
+function filterCategory(cat) {
+  currentCategory = cat;
+  
+  // Atualiza o visual dos botões
+  document.querySelectorAll(".category-btn").forEach(btn => {
+    btn.classList.remove("active");
+    // Verifica se o texto do botão ou o atributo bate com a categoria
+    if(btn.innerText.toLowerCase().includes(cat.slice(0,3))) {
+        btn.classList.add("active");
+    }
+  });
+
+  renderProducts();
 }
 
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
   container.innerHTML = "";
+
+  // FILTRAGEM REAL AQUI
   const filtered = productsData.filter(p => p.category === currentCategory);
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="coming-soon"><h2>Em breve...</h2><p>Estamos preparando novidades!</p></div>`;
+    container.innerHTML = `
+      <div class="coming-soon" style="grid-column: 1/-1; text-align: center; padding: 50px; background: #fff; border-radius: 20px;">
+        <h3>Em breve...</h3>
+        <p>Estamos preparando novidades para esta categoria!</p>
+      </div>`;
     return;
   }
 
   filtered.forEach(p => {
-    // AQUI MUDA O TEXTO DO BOTÃO SE FOR BEBIDA
     const btnText = p.category === 'bebidas' ? 'Selecionar bebida' : 'Selecionar lanche';
-    
     container.innerHTML += `
       <div class="product">
         <img src="${p.img}" onerror="this.src='Logo.png'">
@@ -104,130 +103,136 @@ function openProductModal(id) {
 
     const extrasDiv = document.getElementById("modal-extras");
     extrasDiv.innerHTML = "";
+    
+    // Só mostra adicionais se NÃO for bebida
     if(selectedProduct.category !== 'bebidas') {
         extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
                 <label class="extra-item">
                     <div style="display:flex; align-items:center;">
                         <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}" onchange="updateModalPrice()">
-                        <span>${extra.name}</span>
+                        <span style="margin-left:10px">${extra.name}</span>
                     </div>
                     <span>+ R$ ${extra.price.toFixed(2)}</span>
                 </label>`;
         });
     }
 
-    // PREÇO NO FINAL DO MODAL
     const footer = document.querySelector(".modal-footer");
-    const priceDisplay = document.querySelector(".modal-base-price");
-    if (priceDisplay) priceDisplay.remove(); 
+    const oldPrice = document.querySelector(".modal-base-price");
+    if (oldPrice) oldPrice.remove();
     
-    const newPriceTag = document.createElement("p");
-    newPriceTag.className = "modal-base-price";
-    newPriceTag.style.textAlign = "center";
-    newPriceTag.style.marginBottom = "15px";
-    newPriceTag.innerHTML = `Total: R$ ${selectedProduct.price.toFixed(2)}`;
-    footer.insertBefore(newPriceTag, document.getElementById("add-to-cart-btn"));
+    const priceTag = document.createElement("p");
+    priceTag.className = "modal-base-price";
+    priceTag.style.textAlign = "center";
+    priceTag.style.fontWeight = "bold";
+    priceTag.style.color = "#27ae60";
+    priceTag.style.fontSize = "1.2rem";
+    priceTag.style.margin = "10px 0";
+    priceTag.innerHTML = `Total: R$ ${selectedProduct.price.toFixed(2)}`;
+    footer.insertBefore(priceTag, document.getElementById("add-to-cart-btn"));
 
     document.getElementById("product-modal").style.display = "flex";
-    document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
 }
 
 function updateModalPrice() {
     let total = selectedProduct.price;
-    const checks = document.querySelectorAll('.extra-check:checked');
-    checks.forEach(c => { total += parseFloat(c.getAttribute('data-price')); });
+    document.querySelectorAll('.extra-check:checked').forEach(c => {
+        total += parseFloat(c.getAttribute('data-price'));
+    });
     document.querySelector(".modal-base-price").innerHTML = `Total: R$ ${total.toFixed(2)}`;
 }
 
 function closeModal() { document.getElementById("product-modal").style.display = "none"; }
 
 function addToCartFromModal() {
-    const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
+    const extras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
         name: el.value, price: parseFloat(el.getAttribute('data-price'))
     }));
     const obs = document.getElementById("modal-obs").value;
-    const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
+    const extrasTotal = extras.reduce((sum, e) => sum + e.price, 0);
+    
     cart.push({
-        ...selectedProduct, cartId: Date.now(), extras: selectedExtras,
-        obs: obs, totalPrice: selectedProduct.price + extrasTotal, qty: 1
+        ...selectedProduct, 
+        cartId: Date.now(), 
+        extras, 
+        obs,
+        totalPrice: selectedProduct.price + extrasTotal
     });
+    
     updateCart();
     closeModal();
-    showToast(`${selectedProduct.name} na sacola!`);
+    showToast(`${selectedProduct.name} adicionado!`);
 }
 
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
-  if (!itemsDiv) return;
   itemsDiv.innerHTML = "";
   let subtotal = 0;
+
   cart.forEach(item => {
     subtotal += item.totalPrice;
-    const extrasHtml = item.extras.length > 0 ? `<small>+ ${item.extras.map(e => e.name).join(', ')}</small>` : '';
-    const obsHtml = item.obs ? `<div class="cart-obs">OBS: ${item.obs}</div>` : '';
     itemsDiv.innerHTML += `
-      <div class="cart-item-card">
-        <div class="cart-item-info">
-          <div><strong>${item.name}</strong>${extrasHtml}${obsHtml}</div>
-          <span class="cart-item-price">R$ ${item.totalPrice.toFixed(2)}</span>
+      <div class="cart-item-card" style="background:#fff; padding:15px; border-radius:12px; margin-bottom:10px; border-left:5px solid #27ae60;">
+        <strong>${item.name}</strong><br>
+        <small>${item.extras.map(e => e.name).join(', ')}</small>
+        ${item.obs ? `<br><small>Obs: ${item.obs}</small>` : ''}
+        <div style="display:flex; justify-content:space-between; margin-top:5px;">
+            <span style="color:#27ae60; font-weight:bold;">R$ ${item.totalPrice.toFixed(2)}</span>
+            <button onclick="removeFromCart(${item.cartId})" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">Remover</button>
         </div>
-        <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">Remover</button>
       </div>`;
   });
-  const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
+
+  const deliveryType = document.getElementById("delivery-type").value;
+  const deliveryTax = deliveryType === "entrega" ? 5 : 0;
+  
   document.getElementById("cart-count").innerText = cart.length;
-  document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
+  document.getElementById("cart-total").innerHTML = `Total: R$ ${(subtotal + deliveryTax).toFixed(2)}`;
 }
 
-// MENSAGEM WHATSAPP ORGANIZADA E SEM EMOJIS
 function finishOrder() {
-  if (cart.length === 0) return alert("Sua sacola está vazia!");
-  let textoFinal = "PEDIDO - LC BURGERS\n--------------------------\n\n";
+  if (cart.length === 0) return alert("Sacola vazia!");
+  
+  let msg = "PEDIDO - LC BURGERS\n--------------------------\n\n";
   cart.forEach(i => {
-    textoFinal += `ITEM: ${i.name}\n`;
-    if (i.extras.length > 0) textoFinal += `ADICIONAIS: ${i.extras.map(e => e.name).join(', ')}\n`;
-    if (i.obs) textoFinal += `OBS: ${i.obs}\n`;
-    textoFinal += `VALOR: R$ ${i.totalPrice.toFixed(2)}\n\n`;
+    msg += `ITEM: ${i.name}\n`;
+    if (i.extras.length > 0) msg += `ADICIONAIS: ${i.extras.map(e => e.name).join(', ')}\n`;
+    if (i.obs) msg += `OBS: ${i.obs}\n`;
+    msg += `VALOR: R$ ${i.totalPrice.toFixed(2)}\n\n`;
   });
-  textoFinal += "--------------------------\n";
+  
   const deliveryType = document.getElementById("delivery-type").value;
   if (deliveryType === "entrega") {
-    textoFinal += "FORMA DE ENTREGA: Entrega no Endereco\n";
-    textoFinal += `ENDERECO: ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
-    textoFinal += `BAIRRO: ${document.getElementById("cart-vila").value}\n`;
-  } else { textoFinal += "FORMA DE ENTREGA: Retirada no Balcao\n"; }
+    msg += `ENTREGA: ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
+    msg += `BAIRRO: ${document.getElementById("cart-vila").value}\n`;
+  } else { 
+    msg += "RETIRADA NO BALCAO\n"; 
+  }
+  
   const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
-  textoFinal += `\nPAGAMENTO: ${document.getElementById("payment-method").value}\nTOTAL: R$ ${(subtotal + taxa).toFixed(2)}`;
-  window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
+  msg += `\nPAGAMENTO: ${document.getElementById("payment-method").value}\n`;
+  msg += `TOTAL: R$ ${(subtotal + taxa).toFixed(2)}`;
+  
+  window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(msg)}`);
 }
 
-function filterCategory(cat) {
-  currentCategory = cat;
-  document.querySelectorAll(".category-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`));
-  });
-  renderProducts();
-}
-
-function removeFromCart(cartId) {
-    const index = cart.findIndex(i => i.cartId === cartId);
-    if (index > -1) { cart.splice(index, 1); updateCart(); showToast("Item removido", "error"); }
-}
-
-function clearCart() {
-    if(cart.length === 0) return;
-    if(confirm("Deseja limpar toda a sacola?")) { cart = []; updateCart(); showToast("Sacola limpa", "error"); }
-}
+function removeFromCart(id) { cart = cart.filter(i => i.cartId !== id); updateCart(); }
 
 function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
-function toggleDeliveryFields() {
-    document.getElementById("address-fields").style.display = document.getElementById("delivery-type").value === "entrega" ? "block" : "none";
+
+function toggleDeliveryFields() { 
+    document.getElementById("address-fields").style.display = document.getElementById("delivery-type").value === "entrega" ? "block" : "none"; 
     updateCart();
 }
-function toggleTrocoField() {
-    document.getElementById("troco-field").style.display = document.getElementById("payment-method").value === "Dinheiro" ? "block" : "none";
+
+function showToast(m) {
+    const t = document.createElement("div"); 
+    t.className = "toast-msg toast-success"; 
+    t.innerText = m;
+    document.body.appendChild(t); 
+    setTimeout(() => t.remove(), 2000);
 }
 
 document.addEventListener("DOMContentLoaded", renderProducts);
