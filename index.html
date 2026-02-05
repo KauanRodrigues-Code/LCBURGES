@@ -24,9 +24,7 @@
 
 <section class="products" id="products"></section>
 
-<button class="floating-cart" id="floating-cart" onclick="toggleCart()">
-  🛍 <span id="cart-count">0</span>
-</button>
+<button class="floating-cart" onclick="toggleCart()">🛍 <span id="cart-count">0</span></button>
 
 <div class="cart" id="cart">
   <div class="cart-header">
@@ -36,59 +34,26 @@
 
   <div class="cart-scrollable-content">
     <div class="cart-items" id="cart-items"></div>
-
-    <div class="cart-section-card">
-      <h3>📍 Entrega</h3>
-      <select id="delivery-type" onchange="toggleDeliveryFields()">
-        <option value="entrega">Preciso de Entrega (Taxa R$ 5,00)</option>
-        <option value="retirada">Vou retirar no Balcão</option>
-      </select>
-
-      <div id="address-fields">
-        <input type="text" id="cart-rua" placeholder="Nome da Rua">
-        <div class="input-row">
-          <input type="text" id="cart-numero" placeholder="Nº">
-          <input type="text" id="cart-vila" placeholder="Bairro">
-        </div>
-        <select id="home-type">
-          <option value="Casa">Casa</option>
-          <option value="Apartamento">Apartamento</option>
-        </select>
-        <input type="text" id="cart-ponto-ref" placeholder="Ponto de referência">
-      </div>
-    </div>
-
-    <div class="cart-section-card">
-      <h3>💳 Pagamento</h3>
-      <select id="payment-method" onchange="toggleTrocoField()">
-        <option value="Pix">Pix</option>
-        <option value="Cartão">Cartão</option>
-        <option value="Dinheiro">Dinheiro</option>
-      </select>
-
-      <div id="troco-field" style="display:none">
-        <input type="text" id="cart-troco" placeholder="Troco para quanto?">
-      </div>
-    </div>
   </div>
 
   <div class="cart-footer">
     <div id="cart-total"></div>
-    <button onclick="finishOrder()" class="finish-btn">
-      Concluir Pedido no WhatsApp
-    </button>
+    <button class="finish-btn" onclick="finishOrder()">Concluir Pedido</button>
   </div>
 </div>
 
-<!-- MODAL DE ADICIONAIS -->
-<div id="extras-modal" class="extras-modal">
-  <div class="extras-box">
-    <h3>Escolha os adicionais</h3>
+<!-- MODAL ADICIONAIS -->
+<div class="extras-modal" id="extras-modal">
+  <div class="extras-content">
+    <h2>Escolha os adicionais</h2>
     <div id="extras-list"></div>
+
     <div class="extras-footer">
       <strong id="extras-total">Total: R$ 0,00</strong>
       <button onclick="confirmExtras()">Adicionar</button>
     </div>
+
+    <button class="close-extras" onclick="closeExtras()">✕</button>
   </div>
 </div>
 
