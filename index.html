@@ -18,24 +18,65 @@
 <section class="categories">
   <button class="category-btn active" onclick="filterCategory('tradicionais')">Tradicionais</button>
   <button class="category-btn" onclick="filterCategory('gourmets')">Gourmets</button>
+  <button class="category-btn" onclick="filterCategory('combos')">Combos</button>
   <button class="category-btn" onclick="filterCategory('bebidas')">Bebidas</button>
 </section>
 
 <section class="products" id="products"></section>
 
-<button class="floating-cart" onclick="toggleCart()">🛍 <span id="cart-count">0</span></button>
+<button class="floating-cart" id="floating-cart" onclick="toggleCart()">
+  🛍 <span id="cart-count">0</span>
+</button>
 
 <div class="cart" id="cart">
   <div class="cart-header">
     <h2>Sua Sacola</h2>
-    <button onclick="toggleCart()">✕</button>
+    <button class="close-cart" onclick="toggleCart()">✕</button>
   </div>
 
-  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-scrollable-content">
+    <div class="cart-items" id="cart-items"></div>
+
+    <div class="cart-extra-fields">
+        <div class="cart-section-card">
+            <h3>📍 Entrega</h3>
+            <select id="delivery-type" onchange="toggleDeliveryFields()">
+                <option value="entrega">Preciso de Entrega (Taxa R$ 5,00)</option>
+                <option value="retirada">Vou retirar no Balcão</option>
+            </select>
+
+            <div id="address-fields">
+                <input type="text" id="cart-rua" placeholder="Nome da Rua">
+                <div class="input-row">
+                    <input type="text" id="cart-numero" placeholder="Nº">
+                    <input type="text" id="cart-vila" placeholder="Vila / Bairro">
+                </div>
+                <select id="home-type">
+                    <option value="Casa">Casa</option>
+                    <option value="Apartamento">Apartamento</option>
+                </select>
+                <input type="text" id="cart-ponto-ref" placeholder="Ponto de referência">
+            </div>
+        </div>
+
+        <div class="cart-section-card">
+            <h3>💳 Pagamento</h3>
+            <select id="payment-method" onchange="toggleTrocoField()">
+                <option value="Pix">Pix</option>
+                <option value="Cartão">Cartão (Maquininha)</option>
+                <option value="Dinheiro">Dinheiro</option>
+            </select>
+            
+            <div id="troco-field" style="display: none; margin-top: 10px;">
+                <input type="text" id="cart-troco" placeholder="Troco para quanto?">
+            </div>
+        </div>
+    </div>
+  </div>
 
   <div class="cart-footer">
-    <strong id="cart-total">Total: R$ 0,00</strong>
-    <button onclick="finishOrder()">Concluir Pedido</button>
+    <div id="cart-total"></div> 
+    <button onclick="finishOrder()" class="finish-btn">Concluir Pedido no WhatsApp</button>
   </div>
 </div>
 
