@@ -89,9 +89,11 @@ function openProductModal(id) {
     
     document.getElementById("modal-details").innerHTML = `
         <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
-        <h2>${selectedProduct.name}</h2>
-        <p>${selectedProduct.desc}</p>
-        <p class="modal-base-price">Preço base: R$ ${selectedProduct.price.toFixed(2)}</p>
+        <div class="modal-header-text">
+            <h2>${selectedProduct.name}</h2>
+            <p>${selectedProduct.desc}</p>
+            <p class="modal-base-price">Preço base: R$ ${selectedProduct.price.toFixed(2)}</p>
+        </div>
     `;
 
     const extrasDiv = document.getElementById("modal-extras");
@@ -101,8 +103,10 @@ function openProductModal(id) {
         extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
                 <label class="extra-item">
-                    <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}">
-                    <span>${extra.name}</span>
+                    <div style="display:flex; align-items:center;">
+                        <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}">
+                        <span>${extra.name}</span>
+                    </div>
                     <span>+ R$ ${extra.price.toFixed(2)}</span>
                 </label>
             `;
@@ -137,13 +141,13 @@ function addToCartFromModal() {
 
     updateCart();
     closeModal();
-    showToast(`${selectedProduct.name} adicionado!`);
+    showToast(`${selectedProduct.name} na sacola!`);
 }
 
 function filterCategory(cat) {
   currentCategory = cat;
   document.querySelectorAll(".category-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.innerText.toLowerCase().includes(cat.slice(0,3)));
+    btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`));
   });
   renderProducts();
 }
@@ -153,14 +157,16 @@ function removeFromCart(cartId) {
     if (index > -1) {
         cart.splice(index, 1);
         updateCart();
-        showToast("Removido", "error");
+        showToast("Item removido", "error");
     }
 }
 
 function clearCart() {
-    if(confirm("Limpar sacola inteira?")) {
+    if(cart.length === 0) return;
+    if(confirm("Deseja limpar toda a sacola?")) {
         cart = [];
         updateCart();
+        showToast("Você limpou sua Sacola", "error");
     }
 }
 
@@ -178,9 +184,11 @@ function updateCart() {
     itemsDiv.innerHTML += `
       <div class="cart-item-card">
         <div class="cart-item-info">
-          <strong>${item.name}</strong>
-          ${extrasHtml}
-          ${obsHtml}
+          <div>
+            <strong>${item.name}</strong>
+            ${extrasHtml}
+            ${obsHtml}
+          </div>
           <span class="cart-item-price">R$ ${item.totalPrice.toFixed(2)}</span>
         </div>
         <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">Remover</button>
@@ -189,7 +197,7 @@ function updateCart() {
 
   const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
   document.getElementById("cart-count").innerText = cart.length;
-  document.getElementById("cart-total").innerHTML = `<h3>Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
+  document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
 }
 
 function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
@@ -202,14 +210,22 @@ function toggleTrocoField() {
 }
 
 function finishOrder() {
-  if (cart.length === 0) return alert("Sacola vazia!");
-  let textoFinal = "🍔 *PEDIDO - LC BURGERS*\n\n";
+  if (cart.length === 0) return alert("Sua sacola está vazia!");
+  let textoFinal = "🍔 *NOVO PEDIDO - LC BURGERS*\n\n";
   cart.forEach(i => {
     textoFinal += `✅ *${i.name}*\n${i.extras.length > 0 ? '➕ ' + i.extras.map(e => e.name).join(', ') + '\n' : ''}${i.obs ? '📝 ' + i.obs + '\n' : ''}💰 R$ ${i.totalPrice.toFixed(2)}\n\n`;
   });
-  // ... (restante da lógica de endereço igual ao anterior)
-  const fone = "5543988230563";
-  window.open(`https://wa.me/${fone}?text=${encodeURIComponent(textoFinal)}`);
+
+  const deliveryType = document.getElementById("delivery-type").value;
+  if (deliveryType === "entrega") {
+    textoFinal += `📍 *Entrega:*\n${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value} - ${document.getElementById("cart-vila").value}\n🏠 *Tipo:* ${document.getElementById("home-type").value}\n`;
+  } else { textoFinal += `🏪 *Retirada no Balcão*\n`; }
+
+  const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
+  const taxa = deliveryType === "entrega" ? 5 : 0;
+  textoFinal += `\n💳 *Pagamento:* ${document.getElementById("payment-method").value}\n💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
+
+  window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
 }
 
 document.addEventListener("DOMContentLoaded", renderProducts);
