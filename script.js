@@ -69,6 +69,16 @@ function renderProducts() {
   container.innerHTML = "";
   const filtered = productsData.filter(p => p.category === currentCategory);
 
+  // TELA DE EM BREVE REATIVADA
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="coming-soon">
+        <h2>🍔 Em breve...</h2>
+        <p>Estamos preparando combos incríveis para você!</p>
+      </div>`;
+    return;
+  }
+
   filtered.forEach(p => {
     container.innerHTML += `
       <div class="product">
@@ -86,7 +96,6 @@ function renderProducts() {
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
-    
     document.getElementById("modal-details").innerHTML = `
         <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
         <div class="modal-header-text">
@@ -95,10 +104,8 @@ function openProductModal(id) {
             <p class="modal-base-price">Preço base: R$ ${selectedProduct.price.toFixed(2)}</p>
         </div>
     `;
-
     const extrasDiv = document.getElementById("modal-extras");
     extrasDiv.innerHTML = "";
-    
     if(selectedProduct.category !== 'bebidas') {
         extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
@@ -108,28 +115,22 @@ function openProductModal(id) {
                         <span>${extra.name}</span>
                     </div>
                     <span>+ R$ ${extra.price.toFixed(2)}</span>
-                </label>
-            `;
+                </label>`;
         });
     }
-
     document.getElementById("product-modal").style.display = "flex";
     document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
 }
 
-function closeModal() {
-    document.getElementById("product-modal").style.display = "none";
-}
+function closeModal() { document.getElementById("product-modal").style.display = "none"; }
 
 function addToCartFromModal() {
     const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
         name: el.value,
         price: parseFloat(el.getAttribute('data-price'))
     }));
-    
     const obs = document.getElementById("modal-obs").value;
     const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
-    
     cart.push({
         ...selectedProduct,
         cartId: Date.now(),
@@ -138,7 +139,6 @@ function addToCartFromModal() {
         totalPrice: selectedProduct.price + extrasTotal,
         qty: 1
     });
-
     updateCart();
     closeModal();
     showToast(`${selectedProduct.name} na sacola!`);
@@ -175,26 +175,19 @@ function updateCart() {
   if (!itemsDiv) return;
   itemsDiv.innerHTML = "";
   let subtotal = 0;
-
   cart.forEach(item => {
     subtotal += item.totalPrice;
     const extrasHtml = item.extras.length > 0 ? `<small>+ ${item.extras.map(e => e.name).join(', ')}</small>` : '';
     const obsHtml = item.obs ? `<div class="cart-obs">📝 ${item.obs}</div>` : '';
-
     itemsDiv.innerHTML += `
       <div class="cart-item-card">
         <div class="cart-item-info">
-          <div>
-            <strong>${item.name}</strong>
-            ${extrasHtml}
-            ${obsHtml}
-          </div>
+          <div><strong>${item.name}</strong>${extrasHtml}${obsHtml}</div>
           <span class="cart-item-price">R$ ${item.totalPrice.toFixed(2)}</span>
         </div>
         <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">Remover</button>
       </div>`;
   });
-
   const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
   document.getElementById("cart-count").innerText = cart.length;
   document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
@@ -215,16 +208,13 @@ function finishOrder() {
   cart.forEach(i => {
     textoFinal += `✅ *${i.name}*\n${i.extras.length > 0 ? '➕ ' + i.extras.map(e => e.name).join(', ') + '\n' : ''}${i.obs ? '📝 ' + i.obs + '\n' : ''}💰 R$ ${i.totalPrice.toFixed(2)}\n\n`;
   });
-
   const deliveryType = document.getElementById("delivery-type").value;
   if (deliveryType === "entrega") {
     textoFinal += `📍 *Entrega:*\n${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value} - ${document.getElementById("cart-vila").value}\n🏠 *Tipo:* ${document.getElementById("home-type").value}\n`;
   } else { textoFinal += `🏪 *Retirada no Balcão*\n`; }
-
   const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
   textoFinal += `\n💳 *Pagamento:* ${document.getElementById("payment-method").value}\n💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
-
   window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
 }
 
