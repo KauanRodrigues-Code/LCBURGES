@@ -70,15 +70,14 @@ function renderProducts() {
   const filtered = productsData.filter(p => p.category === currentCategory);
 
   if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="coming-soon">
-        <h2>🍔 Em breve...</h2>
-        <p>Estamos preparando combos incríveis para você!</p>
-      </div>`;
+    container.innerHTML = `<div class="coming-soon"><h2>Em breve...</h2><p>Estamos preparando novidades!</p></div>`;
     return;
   }
 
   filtered.forEach(p => {
+    // AQUI MUDA O TEXTO DO BOTÃO SE FOR BEBIDA
+    const btnText = p.category === 'bebidas' ? 'Selecionar bebida' : 'Selecionar lanche';
+    
     container.innerHTML += `
       <div class="product">
         <img src="${p.img}" onerror="this.src='Logo.png'">
@@ -86,7 +85,7 @@ function renderProducts() {
         <p>${p.desc}</p>
         <div class="product-footer">
           <span>R$ ${p.price.toFixed(2)}</span>
-          <button class="select-btn" onclick="openProductModal(${p.id})">Selecionar lanche</button>
+          <button class="select-btn" onclick="openProductModal(${p.id})">${btnText}</button>
         </div>
       </div>`;
   });
@@ -95,7 +94,6 @@ function renderProducts() {
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
-    
     document.getElementById("modal-details").innerHTML = `
         <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
         <div class="modal-header-text">
@@ -119,6 +117,7 @@ function openProductModal(id) {
         });
     }
 
+    // PREÇO NO FINAL DO MODAL
     const footer = document.querySelector(".modal-footer");
     const priceDisplay = document.querySelector(".modal-base-price");
     if (priceDisplay) priceDisplay.remove(); 
@@ -137,9 +136,7 @@ function openProductModal(id) {
 function updateModalPrice() {
     let total = selectedProduct.price;
     const checks = document.querySelectorAll('.extra-check:checked');
-    checks.forEach(c => {
-        total += parseFloat(c.getAttribute('data-price'));
-    });
+    checks.forEach(c => { total += parseFloat(c.getAttribute('data-price')); });
     document.querySelector(".modal-base-price").innerHTML = `Total: R$ ${total.toFixed(2)}`;
 }
 
@@ -147,48 +144,17 @@ function closeModal() { document.getElementById("product-modal").style.display =
 
 function addToCartFromModal() {
     const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
-        name: el.value,
-        price: parseFloat(el.getAttribute('data-price'))
+        name: el.value, price: parseFloat(el.getAttribute('data-price'))
     }));
     const obs = document.getElementById("modal-obs").value;
     const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
     cart.push({
-        ...selectedProduct,
-        cartId: Date.now(),
-        extras: selectedExtras,
-        obs: obs,
-        totalPrice: selectedProduct.price + extrasTotal,
-        qty: 1
+        ...selectedProduct, cartId: Date.now(), extras: selectedExtras,
+        obs: obs, totalPrice: selectedProduct.price + extrasTotal, qty: 1
     });
     updateCart();
     closeModal();
     showToast(`${selectedProduct.name} na sacola!`);
-}
-
-function filterCategory(cat) {
-  currentCategory = cat;
-  document.querySelectorAll(".category-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`));
-  });
-  renderProducts();
-}
-
-function removeFromCart(cartId) {
-    const index = cart.findIndex(i => i.cartId === cartId);
-    if (index > -1) {
-        cart.splice(index, 1);
-        updateCart();
-        showToast("Item removido", "error");
-    }
-}
-
-function clearCart() {
-    if(cart.length === 0) return;
-    if(confirm("Deseja limpar toda a sacola?")) {
-        cart = [];
-        updateCart();
-        showToast("Você limpou sua Sacola", "error");
-    }
 }
 
 function updateCart() {
@@ -199,7 +165,7 @@ function updateCart() {
   cart.forEach(item => {
     subtotal += item.totalPrice;
     const extrasHtml = item.extras.length > 0 ? `<small>+ ${item.extras.map(e => e.name).join(', ')}</small>` : '';
-    const obsHtml = item.obs ? `<div class="cart-obs">📝 ${item.obs}</div>` : '';
+    const obsHtml = item.obs ? `<div class="cart-obs">OBS: ${item.obs}</div>` : '';
     itemsDiv.innerHTML += `
       <div class="cart-item-card">
         <div class="cart-item-info">
@@ -214,6 +180,47 @@ function updateCart() {
   document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
 }
 
+// MENSAGEM WHATSAPP ORGANIZADA E SEM EMOJIS
+function finishOrder() {
+  if (cart.length === 0) return alert("Sua sacola está vazia!");
+  let textoFinal = "PEDIDO - LC BURGERS\n--------------------------\n\n";
+  cart.forEach(i => {
+    textoFinal += `ITEM: ${i.name}\n`;
+    if (i.extras.length > 0) textoFinal += `ADICIONAIS: ${i.extras.map(e => e.name).join(', ')}\n`;
+    if (i.obs) textoFinal += `OBS: ${i.obs}\n`;
+    textoFinal += `VALOR: R$ ${i.totalPrice.toFixed(2)}\n\n`;
+  });
+  textoFinal += "--------------------------\n";
+  const deliveryType = document.getElementById("delivery-type").value;
+  if (deliveryType === "entrega") {
+    textoFinal += "FORMA DE ENTREGA: Entrega no Endereco\n";
+    textoFinal += `ENDERECO: ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
+    textoFinal += `BAIRRO: ${document.getElementById("cart-vila").value}\n`;
+  } else { textoFinal += "FORMA DE ENTREGA: Retirada no Balcao\n"; }
+  const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
+  const taxa = deliveryType === "entrega" ? 5 : 0;
+  textoFinal += `\nPAGAMENTO: ${document.getElementById("payment-method").value}\nTOTAL: R$ ${(subtotal + taxa).toFixed(2)}`;
+  window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
+}
+
+function filterCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll(".category-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`));
+  });
+  renderProducts();
+}
+
+function removeFromCart(cartId) {
+    const index = cart.findIndex(i => i.cartId === cartId);
+    if (index > -1) { cart.splice(index, 1); updateCart(); showToast("Item removido", "error"); }
+}
+
+function clearCart() {
+    if(cart.length === 0) return;
+    if(confirm("Deseja limpar toda a sacola?")) { cart = []; updateCart(); showToast("Sacola limpa", "error"); }
+}
+
 function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
 function toggleDeliveryFields() {
     document.getElementById("address-fields").style.display = document.getElementById("delivery-type").value === "entrega" ? "block" : "none";
@@ -221,44 +228,6 @@ function toggleDeliveryFields() {
 }
 function toggleTrocoField() {
     document.getElementById("troco-field").style.display = document.getElementById("payment-method").value === "Dinheiro" ? "block" : "none";
-}
-
-function finishOrder() {
-  if (cart.length === 0) return alert("Sua sacola está vazia!");
-  
-  let textoFinal = "PEDIDO - LC BURGERS\n";
-  textoFinal += "--------------------------\n\n";
-
-  cart.forEach(i => {
-    textoFinal += `ITEM: ${i.name}\n`;
-    if (i.extras.length > 0) {
-      textoFinal += `ADICIONAIS: ${i.extras.map(e => e.name).join(', ')}\n`;
-    }
-    if (i.obs) {
-      textoFinal += `OBS: ${i.obs}\n`;
-    }
-    textoFinal += `VALOR: R$ ${i.totalPrice.toFixed(2)}\n\n`;
-  });
-
-  textoFinal += "--------------------------\n";
-  
-  const deliveryType = document.getElementById("delivery-type").value;
-  if (deliveryType === "entrega") {
-    textoFinal += "FORMA DE ENTREGA: Entrega no Endereco\n";
-    textoFinal += `ENDERECO: ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
-    textoFinal += `BAIRRO: ${document.getElementById("cart-vila").value}\n`;
-    textoFinal += `TIPO: ${document.getElementById("home-type").value}\n`;
-  } else { 
-    textoFinal += "FORMA DE ENTREGA: Retirada no Balcao\n"; 
-  }
-
-  const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
-  const taxa = deliveryType === "entrega" ? 5 : 0;
-  
-  textoFinal += `\nFORMA DE PAGAMENTO: ${document.getElementById("payment-method").value}\n`;
-  textoFinal += `TOTAL DO PEDIDO: R$ ${(subtotal + taxa).toFixed(2)}`;
-
-  window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
 }
 
 document.addEventListener("DOMContentLoaded", renderProducts);
