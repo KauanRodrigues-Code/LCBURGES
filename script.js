@@ -85,11 +85,8 @@ function openProductModal(id) {
         extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
             <label class="extra-item">
-                <div class="extra-left">
-                    <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}">
-                    <span class="extra-name">${extra.name}</span>
-                </div>
-                <span class="extra-price">+ R$ ${extra.price.toFixed(2)}</span>
+                <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}">
+                <span>${extra.name} + R$ ${extra.price.toFixed(2)}</span>
             </label>`;
         });
     }
@@ -148,7 +145,7 @@ function updateCart() {
     });
     const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
     document.getElementById("cart-count").innerText = cart.length;
-    document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px; font-size:1.4rem;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
+    document.getElementById("cart-total").innerHTML = `<h3 class="total-text">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
 }
 
 function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
