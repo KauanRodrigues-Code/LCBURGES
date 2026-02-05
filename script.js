@@ -69,7 +69,6 @@ function renderProducts() {
   container.innerHTML = "";
   const filtered = productsData.filter(p => p.category === currentCategory);
 
-  // TELA DE EM BREVE REATIVADA
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="coming-soon">
@@ -96,14 +95,16 @@ function renderProducts() {
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
+    
+    // Removido o preço daqui para colocar no final
     document.getElementById("modal-details").innerHTML = `
         <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
         <div class="modal-header-text">
             <h2>${selectedProduct.name}</h2>
             <p>${selectedProduct.desc}</p>
-            <p class="modal-base-price">Preço base: R$ ${selectedProduct.price.toFixed(2)}</p>
         </div>
     `;
+
     const extrasDiv = document.getElementById("modal-extras");
     extrasDiv.innerHTML = "";
     if(selectedProduct.category !== 'bebidas') {
@@ -111,15 +112,38 @@ function openProductModal(id) {
             extrasDiv.innerHTML += `
                 <label class="extra-item">
                     <div style="display:flex; align-items:center;">
-                        <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}">
+                        <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}" onchange="updateModalPrice()">
                         <span>${extra.name}</span>
                     </div>
                     <span>+ R$ ${extra.price.toFixed(2)}</span>
                 </label>`;
         });
     }
+
+    // Adiciona o preço dinâmico no final (acima do botão)
+    const footer = document.querySelector(".modal-footer");
+    const priceDisplay = document.querySelector(".modal-base-price");
+    if (priceDisplay) priceDisplay.remove(); // Limpa se já existir
+    
+    const newPriceTag = document.createElement("p");
+    newPriceTag.className = "modal-base-price";
+    newPriceTag.style.textAlign = "center";
+    newPriceTag.style.marginBottom = "15px";
+    newPriceTag.innerHTML = `Total: R$ ${selectedProduct.price.toFixed(2)}`;
+    footer.insertBefore(newPriceTag, document.getElementById("add-to-cart-btn"));
+
     document.getElementById("product-modal").style.display = "flex";
     document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
+}
+
+// NOVA FUNÇÃO: Atualiza o preço enquanto marca os adicionais
+function updateModalPrice() {
+    let total = selectedProduct.price;
+    const checks = document.querySelectorAll('.extra-check:checked');
+    checks.forEach(c => {
+        total += parseFloat(c.getAttribute('data-price'));
+    });
+    document.querySelector(".modal-base-price").innerHTML = `Total: R$ ${total.toFixed(2)}`;
 }
 
 function closeModal() { document.getElementById("product-modal").style.display = "none"; }
