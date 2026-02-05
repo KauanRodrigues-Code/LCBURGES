@@ -24,6 +24,19 @@ body { background-color: #f4f4f4; padding-bottom: 100px; }
 }
 .category-btn.active { background: #111; color: #fff; }
 
+/* TELA EM BREVE */
+.coming-soon {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    background: #fff;
+    border-radius: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.coming-soon h2 { color: #333; margin-bottom: 10px; }
+.coming-soon p { color: #666; }
+
 /* PRODUTOS NA VITRINE */
 .products { 
     display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
