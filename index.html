@@ -24,7 +24,7 @@
 
 <section class="products" id="products"></section>
 
-<div id="product-modal" class="modal">
+<div id="product-modal" class="modal-overlay">
   <div class="modal-content">
     <button class="close-modal" onclick="closeModal()">✕</button>
     
@@ -40,7 +40,7 @@
       <textarea id="modal-obs" placeholder="Ex: Tirar cebola, ponto da carne, etc."></textarea>
     </div>
 
-    <div class="modal-footer">
+    <div class="modal-footer-btn">
       <button id="add-to-cart-btn" class="finish-btn">Adicionar à Sacola</button>
     </div>
   </div>
@@ -53,10 +53,7 @@
 <div class="cart" id="cart">
   <div class="cart-header">
     <h2>Sua Sacola</h2>
-    <div class="header-actions">
-        <button class="clear-cart" onclick="clearCart()">Limpar</button>
-        <button class="close-cart" onclick="toggleCart()">✕</button>
-    </div>
+    <button class="close-cart" onclick="toggleCart()">✕</button>
   </div>
 
   <div class="cart-scrollable-content">
@@ -101,6 +98,7 @@
 
   <div class="cart-footer">
     <div id="cart-total"></div> 
+    <button onclick="clearCart()" class="clear-cart-btn">Limpar Sacola</button>
     <button onclick="finishOrder()" class="finish-btn">Concluir Pedido no WhatsApp</button>
   </div>
 </div>
