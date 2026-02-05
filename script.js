@@ -27,14 +27,21 @@ const extrasData = [
     { name: "Frango Empanado", price: 12.00 }, { name: "Hambúrguer de Linguiça", price: 10.00 },
     { name: "Hambúrguer Tradicional", price: 8.00 }, { name: "Hambúrguer Gourmet", price: 10.00 },
     { name: "Cheddar", price: 4.00 }, { name: "Queijo Mussarela", price: 3.00 },
-    { name: "Bacon", price: 6.00 }, { name: "Ovo", price: 4.00 }
+    { name: "Queijo Coalho", price: 5.00 }, { name: "Queijo Coalho c/ Mel", price: 6.00 },
+    { name: "Calabresa", price: 6.00 }, { name: "Maionese C.", price: 2.00 },
+    { name: "Cebola", price: 2.00 }, { name: "Ovo", price: 4.00 },
+    { name: "Bacon", price: 6.00 }, { name: "Batata Palha", price: 3.00 },
+    { name: "Requeijão", price: 4.00 }, { name: "Barbecue", price: 4.00 },
+    { name: "Alface", price: 2.00 }, { name: "Tomate", price: 2.00 },
+    { name: "Vinagrete", price: 3.00 }, { name: "Doritos", price: 5.00 },
+    { name: "Geleia", price: 3.00 }, { name: "Cebola Caramelizada", price: 5.00 },
+    { name: "Abacaxi", price: 5.00 }
 ];
 
 let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
-// FUNÇÃO DE RENDERIZAR
 function renderProducts() {
     const container = document.getElementById("products");
     container.innerHTML = "";
@@ -60,7 +67,7 @@ function renderProducts() {
 function filterCategory(cat) {
     currentCategory = cat;
     document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.innerText.toLowerCase().includes(cat.slice(0,3)));
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${cat}'`));
     });
     renderProducts();
 }
@@ -69,10 +76,10 @@ function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
     document.getElementById("modal-details").innerHTML = `
-        <img src="${selectedProduct.img}" style="width:100%; height:150px; object-fit:contain;">
-        <h2 style="margin-top:10px;">${selectedProduct.name}</h2>
+        <img src="${selectedProduct.img}" style="width:100%; height:180px; object-fit:contain;">
+        <h2 style="margin:15px 0 5px;">${selectedProduct.name}</h2>
         <p style="color:#666; font-size:0.9rem;">${selectedProduct.desc}</p>
-        <p id="modal-total" style="color:#27ae60; font-weight:800; font-size:1.2rem; margin-top:10px;">R$ ${selectedProduct.price.toFixed(2)}</p>
+        <p id="modal-total-val" style="color:#27ae60; font-weight:800; font-size:1.3rem; margin-top:10px;">Total: R$ ${selectedProduct.price.toFixed(2)}</p>
     `;
 
     const extrasDiv = document.getElementById("modal-extras");
@@ -80,9 +87,9 @@ function openProductModal(id) {
     if(selectedProduct.category !== 'bebidas') {
         extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
-                <label class="extra-item">
+                <label style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
                     <span><input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}" onchange="updateModalPrice()"> ${extra.name}</span>
-                    <span>+ R$ ${extra.price.toFixed(2)}</span>
+                    <span style="color:#666;">+ R$ ${extra.price.toFixed(2)}</span>
                 </label>`;
         });
     }
@@ -91,16 +98,16 @@ function openProductModal(id) {
 
 function updateModalPrice() {
     let total = selectedProduct.price;
-    document.querySelectorAll('.extra-check:checked').forEach(c => total += parseFloat(c.getAttribute('data-price')));
-    document.getElementById("modal-total").innerText = `R$ ${total.toFixed(2)}`;
+    document.querySelectorAll('.extra-check:checked').forEach(c => total += parseFloat(c.dataset.price));
+    document.getElementById("modal-total-val").innerText = `Total: R$ ${total.toFixed(2)}`;
 }
 
 function addToCartFromModal() {
     const extras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
-        name: el.value, price: parseFloat(el.getAttribute('data-price'))
+        name: el.value, price: parseFloat(el.dataset.price)
     }));
-    const extrasTotal = extras.reduce((a, b) => a + b.price, 0);
-    cart.push({ ...selectedProduct, cartId: Date.now(), extras, obs: document.getElementById("modal-obs").value, totalPrice: selectedProduct.price + extrasTotal });
+    const totalItem = selectedProduct.price + extras.reduce((a, b) => a + b.price, 0);
+    cart.push({ ...selectedProduct, cartId: Date.now(), extras, obs: document.getElementById("modal-obs").value, totalPrice: totalItem });
     updateCart(); closeModal();
 }
 
@@ -111,7 +118,7 @@ function updateCart() {
     cart.forEach(item => {
         subtotal += item.totalPrice;
         itemsDiv.innerHTML += `
-            <div style="background:#fff; padding:10px; border-radius:10px; margin-bottom:10px; border-left:4px solid #27ae60;">
+            <div style="background:#fff; padding:12px; border-radius:10px; margin-bottom:10px; border-left:4px solid #27ae60;">
                 <strong>${item.name}</strong><br>
                 <small>${item.extras.map(e => e.name).join(', ')}</small>
                 <div style="display:flex; justify-content:space-between; margin-top:5px;">
@@ -129,13 +136,16 @@ function finishOrder() {
     if (cart.length === 0) return alert("Sacola vazia!");
     let msg = "*PEDIDO LC BURGERS*\n\n";
     cart.forEach(i => {
-        msg += `*${i.name}*\n${i.extras.length ? 'Adicionais: ' + i.extras.map(e => e.name).join(', ') + '\n' : ''}${i.obs ? 'Obs: ' + i.obs + '\n' : ''}Valor: R$ ${i.totalPrice.toFixed(2)}\n\n`;
+        msg += `*${i.name}*\n${i.extras.length ? '- ' + i.extras.map(e => e.name).join(', ') + '\n' : ''}${i.obs ? '- Obs: ' + i.obs + '\n' : ''}Valor: R$ ${i.totalPrice.toFixed(2)}\n\n`;
     });
     const delivery = document.getElementById("delivery-type").value;
     if(delivery === "entrega") {
-        msg += `*ENTREGA:* ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n*BAIRRO:* ${document.getElementById("cart-vila").value}\n`;
+        msg += `*ENTREGA:* ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n*Bairro:* ${document.getElementById("cart-vila").value}\n*Ref:* ${document.getElementById("cart-ponto-ref").value}\n`;
     } else { msg += "*RETIRADA NO BALCÃO*\n"; }
-    msg += `\n*PAGAMENTO:* ${document.getElementById("payment-method").value}\n*TOTAL:* ${document.getElementById("cart-total").innerText}`;
+    
+    const pag = document.getElementById("payment-method").value;
+    msg += `\n*PAGAMENTO:* ${pag}${pag === 'Dinheiro' ? ' (Troco p/ ' + document.getElementById("cart-troco").value + ')' : ''}`;
+    msg += `\n*TOTAL:* ${document.getElementById("cart-total").innerText}`;
     window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(msg)}`);
 }
 
