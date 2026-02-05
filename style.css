@@ -1,23 +1,23 @@
 /* CONFIGURAÇÕES GERAIS */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background-color: #f4f4f4; padding-bottom: 100px; }
+body { background-color: #f4f4f4; color: #111; overflow-x: hidden; }
 
-/* IMPEDIR ZOOM NO IOS */
-input, select, textarea { font-size: 16px !important; width: 100%; }
-
-/* HEADER */
+/* BANNER - LC BURGERS */
 .main-header {
     width: 100%; height: 200px;
-    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('Logo.png');
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('Logo.png');
     background-size: cover; background-position: center;
-    display: flex; justify-content: center; align-items: center; color: white; text-align: center;
+    display: flex; justify-content: center; align-items: center;
+    color: white; text-align: center;
 }
+.header-content h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: 2px; }
+.header-content p { font-size: 0.9rem; margin-top: 5px; opacity: 0.9; }
 
 /* CATEGORIAS */
 .categories { 
     display: flex; overflow-x: auto; padding: 15px; gap: 10px; 
-    background: #fff; position: sticky; top: 0; z-index: 10; 
-    border-bottom: 1px solid #eee; 
+    background: #fff; position: sticky; top: 0; z-index: 1000; 
+    border-bottom: 1px solid #eee; scrollbar-width: none;
 }
 .categories::-webkit-scrollbar { display: none; }
 .category-btn { 
@@ -27,77 +27,52 @@ input, select, textarea { font-size: 16px !important; width: 100%; }
 }
 .category-btn.active { background: #111; color: #fff; }
 
-/* PRODUTOS */
+/* PRODUTOS - GRID QUE NÃO TRAVA */
 .products { 
     display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-    gap: 20px; padding: 20px; 
+    gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto;
 }
-.product { 
+.product-card { 
     background: #fff; border-radius: 18px; overflow: hidden; 
     display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
 }
-.product img { width: 100%; height: 230px; object-fit: contain; padding: 10px; }
-.product h3 { padding: 15px 15px 5px; font-weight: 800; font-size: 1.1rem; }
-.product p { padding: 0 15px 15px; font-size: 0.9rem; color: #666; flex-grow: 1; }
-
+.product-card img { width: 100%; height: 200px; object-fit: contain; padding: 10px; }
+.product-info { padding: 15px; flex-grow: 1; }
+.product-info h3 { font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; }
+.product-info p { font-size: 0.9rem; color: #666; line-height: 1.4; }
 .product-footer { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f9f9f9; }
-.product-footer span { font-size: 1.2rem; font-weight: 800; color: #27ae60; }
-
+.price { font-size: 1.2rem; font-weight: 800; color: #27ae60; }
 .select-btn { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
 /* MODAL */
-.modal-overlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center;
-}
-.modal-content {
-    background: white; width: 95%; max-width: 500px; max-height: 90vh;
-    border-radius: 20px; overflow-y: auto; position: relative; padding-bottom: 20px;
-}
-.modal-img-top { width: 100%; height: 200px; object-fit: cover; }
-.modal-header-text { padding: 20px; }
-.modal-base-price { color: #27ae60; font-weight: 800; font-size: 1.3rem; margin: 10px 0; }
-.extra-item { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #f4f4f4; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
+.modal-content { background: white; width: 95%; max-width: 500px; max-height: 90vh; border-radius: 20px; overflow-y: auto; position: relative; padding: 20px; }
+.close-modal { position: absolute; top: 15px; right: 15px; background: #eee; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 10; }
+.extra-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f4f4f4; align-items: center; }
+textarea { width: 100%; height: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ddd; margin-top: 10px; resize: none; }
 
-/* CARRINHO (CORREÇÃO DE LAYOUT) */
-.cart { 
-    position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; 
-    height: 100%; background: #f4f4f4; z-index: 3000; transition: 0.4s; 
-    display: flex; flex-direction: column; 
-}
+/* CARRINHO (SACOLA) */
+.cart { position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; height: 100%; background: #f4f4f4; z-index: 10000; transition: 0.4s; display: flex; flex-direction: column; }
 .cart.open { right: 0; }
-.cart-header { padding: 20px; background: #111; color: white; display: flex; justify-content: space-between; }
-
+.cart-header { padding: 20px; background: #111; color: white; display: flex; justify-content: space-between; align-items: center; }
 .cart-scrollable-content { flex: 1; overflow-y: auto; padding: 15px; }
 
-/* ESTILO DOS CARDS DENTRO DO CARRINHO */
-.cart-section-card { 
-    background: #fff; padding: 20px; border-radius: 15px; 
-    margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-.cart-section-card h3 { margin-bottom: 15px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+/* CARDS DENTRO DA SACOLA */
+.cart-section-card { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.cart-section-card h3 { margin-bottom: 12px; font-size: 1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+.cart-section-card input, .cart-section-card select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; background: #fff; }
 
-/* AJUSTE DOS INPUTS DE ENDEREÇO */
-.address-grid { display: grid; grid-template-columns: 1fr 80px; gap: 10px; margin-bottom: 10px; }
-.cart-section-card input, .cart-section-card select { 
-    padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; background: #fff;
-}
+/* LINHA DE INPUTS LADO A LADO */
+.input-row { display: flex; gap: 10px; }
+.input-row input:nth-child(1) { flex: 1; } /* Nº */
+.input-row input:nth-child(2) { flex: 3; } /* Bairro */
 
-/* BOTÕES RODAPÉ */
-.cart-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; }
-.clear-cart-btn { background: #e74c3c; color: white; padding: 10px; width: 100%; border-radius: 25px; border: none; margin-bottom: 10px; font-weight: bold; }
-.finish-btn { background: #27ae60; color: white; padding: 15px; width: 100%; border-radius: 25px; border: none; font-weight: bold; font-size: 1rem; }
+/* RODAPÉ DA SACOLA */
+.cart-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
+#cart-total { font-size: 1.3rem; font-weight: 800; text-align: center; margin-bottom: 15px; }
+.finish-btn { background: #27ae60; color: white; padding: 15px; width: 100%; border-radius: 25px; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; }
+.clear-cart-btn { background: #e74c3c; color: white; padding: 10px; width: 100%; border-radius: 25px; border: none; margin-bottom: 10px; font-weight: bold; cursor: pointer; }
 
-/* FLOATING CART BUTTON */
-.floating-cart { 
-    position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; 
-    background: #111; color: white; border-radius: 50%; border: none; z-index: 99; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-#cart-count { position: absolute; top: -5px; right: -5px; background: #e74c3c; width: 22px; height: 22px; border-radius: 50%; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; }
-
-/* TOAST */
-.toast-msg { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 25px; border-radius: 30px; color: white; z-index: 5000; animation: fadeInOut 2s forwards; }
-.toast-success { background: #27ae60; }
-.toast-error { background: #e74c3c; }
-@keyframes fadeInOut { 0%, 100% { opacity: 0; } 20%, 80% { opacity: 1; } }
+/* BOTÃO FLUTUANTE */
+.floating-cart { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #111; color: white; border-radius: 50%; border: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; font-size: 1.5rem; }
+#cart-count { position: absolute; top: -5px; right: -5px; background: #e74c3c; width: 22px; height: 22px; border-radius: 50%; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
