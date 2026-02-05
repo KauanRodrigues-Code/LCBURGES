@@ -96,7 +96,6 @@ function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
     
-    // Removido o preço daqui para colocar no final
     document.getElementById("modal-details").innerHTML = `
         <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
         <div class="modal-header-text">
@@ -120,10 +119,9 @@ function openProductModal(id) {
         });
     }
 
-    // Adiciona o preço dinâmico no final (acima do botão)
     const footer = document.querySelector(".modal-footer");
     const priceDisplay = document.querySelector(".modal-base-price");
-    if (priceDisplay) priceDisplay.remove(); // Limpa se já existir
+    if (priceDisplay) priceDisplay.remove(); 
     
     const newPriceTag = document.createElement("p");
     newPriceTag.className = "modal-base-price";
@@ -136,7 +134,6 @@ function openProductModal(id) {
     document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
 }
 
-// NOVA FUNÇÃO: Atualiza o preço enquanto marca os adicionais
 function updateModalPrice() {
     let total = selectedProduct.price;
     const checks = document.querySelectorAll('.extra-check:checked');
@@ -228,17 +225,39 @@ function toggleTrocoField() {
 
 function finishOrder() {
   if (cart.length === 0) return alert("Sua sacola está vazia!");
-  let textoFinal = "🍔 *NOVO PEDIDO - LC BURGERS*\n\n";
+  
+  let textoFinal = "PEDIDO - LC BURGERS\n";
+  textoFinal += "--------------------------\n\n";
+
   cart.forEach(i => {
-    textoFinal += `✅ *${i.name}*\n${i.extras.length > 0 ? '➕ ' + i.extras.map(e => e.name).join(', ') + '\n' : ''}${i.obs ? '📝 ' + i.obs + '\n' : ''}💰 R$ ${i.totalPrice.toFixed(2)}\n\n`;
+    textoFinal += `ITEM: ${i.name}\n`;
+    if (i.extras.length > 0) {
+      textoFinal += `ADICIONAIS: ${i.extras.map(e => e.name).join(', ')}\n`;
+    }
+    if (i.obs) {
+      textoFinal += `OBS: ${i.obs}\n`;
+    }
+    textoFinal += `VALOR: R$ ${i.totalPrice.toFixed(2)}\n\n`;
   });
+
+  textoFinal += "--------------------------\n";
+  
   const deliveryType = document.getElementById("delivery-type").value;
   if (deliveryType === "entrega") {
-    textoFinal += `📍 *Entrega:*\n${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value} - ${document.getElementById("cart-vila").value}\n🏠 *Tipo:* ${document.getElementById("home-type").value}\n`;
-  } else { textoFinal += `🏪 *Retirada no Balcão*\n`; }
+    textoFinal += "FORMA DE ENTREGA: Entrega no Endereco\n";
+    textoFinal += `ENDERECO: ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
+    textoFinal += `BAIRRO: ${document.getElementById("cart-vila").value}\n`;
+    textoFinal += `TIPO: ${document.getElementById("home-type").value}\n`;
+  } else { 
+    textoFinal += "FORMA DE ENTREGA: Retirada no Balcao\n"; 
+  }
+
   const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
-  textoFinal += `\n💳 *Pagamento:* ${document.getElementById("payment-method").value}\n💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
+  
+  textoFinal += `\nFORMA DE PAGAMENTO: ${document.getElementById("payment-method").value}\n`;
+  textoFinal += `TOTAL DO PEDIDO: R$ ${(subtotal + taxa).toFixed(2)}`;
+
   window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
 }
 
