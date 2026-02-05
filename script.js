@@ -23,175 +23,101 @@ const productsData = [
   { id: 18, name: "Coca-Cola 1L Zero Açúcar", desc: "Garrafa 1L gelada", price: 12.00, category: "bebidas", img: "COCA-1L-ZERO.png" }
 ];
 
+// 🔥 ADICIONAIS
+const adicionais = [
+  { name: "Hambúrguer Empanado de Frango", price: 12 },
+  { name: "Hambúrguer de Linguiça Toscana", price: 10 },
+  { name: "Hambúrguer Tradicional", price: 8 },
+  { name: "Hambúrguer Gourmet", price: 10 },
+  { name: "Cheddar", price: 4 },
+  { name: "Queijo Mussarela", price: 3 },
+  { name: "Queijo Coalho", price: 5 },
+  { name: "Queijo Coalho com Mel", price: 6 },
+  { name: "Calabresa", price: 6 },
+  { name: "Maionese Caseira", price: 2 },
+  { name: "Cebola", price: 2 },
+  { name: "Ovo", price: 4 },
+  { name: "Bacon", price: 6 },
+  { name: "Batata Palha", price: 3 },
+  { name: "Requeijão", price: 4 },
+  { name: "Barbecue", price: 4 },
+  { name: "Alface", price: 2 },
+  { name: "Tomate", price: 2 },
+  { name: "Vinagrete", price: 3 },
+  { name: "Doritos", price: 5 },
+  { name: "Geleia", price: 3 },
+  { name: "Cebola Caramelizada", price: 5 },
+  { name: "Abacaxi", price: 5 }
+];
+
 let cart = [];
 let currentCategory = "tradicionais";
-
-function showToast(message, type = "success") {
-    const oldToast = document.querySelector(".toast-msg");
-    if (oldToast) oldToast.remove();
-    const toast = document.createElement("div");
-    toast.className = `toast-msg ${type === "success" ? "toast-success" : "toast-error"}`;
-    toast.innerText = message;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.remove(); }, 2000);
-}
+let produtoSelecionado = null;
 
 function renderProducts() {
   const container = document.getElementById("products");
-  if (!container) return;
   container.innerHTML = "";
-  
-  const filtered = productsData.filter(p => p.category === currentCategory);
 
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 50px; background: #fff; border-radius: 15px; margin: 20px;">
-        <h2 style="color: #333;">🍔 Em breve...</h2>
-        <p style="color: #666; margin-top: 10px;">Estamos preparando combos incríveis para você!</p>
-      </div>`;
+  productsData.filter(p => p.category === currentCategory).forEach(p => {
+    container.innerHTML += `
+      <div class="product" onclick="abrirAdicionais(${p.id})">
+        <img src="${p.img}">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <span>R$ ${p.price.toFixed(2)}</span>
+      </div>
+    `;
+  });
+}
+
+function abrirAdicionais(id) {
+  produtoSelecionado = productsData.find(p => p.id === id);
+  if (produtoSelecionado.category === "bebidas") {
+    addToCart(id);
     return;
   }
 
-  filtered.forEach(p => {
-    container.innerHTML += `
-      <div class="product">
-        <img src="${p.img}" onerror="this.src='Logo.png'">
-        <h3>${p.name}</h3>
-        <p>${p.desc}</p>
-        <div class="product-footer">
-          <span>R$ ${p.price.toFixed(2)}</span>
-          <div>
-            <button class="remove-btn" onclick="removeFromCart(${p.id})">−</button>
-            <button class="add-btn" onclick="addToCart(${p.id})">+</button>
-          </div>
-        </div>
-      </div>`;
-  });
+  const box = document.getElementById("lista-adicionais");
+  box.innerHTML = adicionais.map(a =>
+    `<label><input type="checkbox" value="${a.price}" data-name="${a.name}"> ${a.name} (+R$ ${a.price})</label>`
+  ).join("");
+
+  document.getElementById("modal-adicionais").classList.add("open");
 }
 
-function filterCategory(cat) {
-  currentCategory = cat;
-  document.querySelectorAll(".category-btn").forEach(btn => {
-    const btnOnClick = btn.getAttribute("onclick");
-    btn.classList.toggle("active", btnOnClick.includes(`'${cat}'`));
-  });
-  renderProducts();
-}
+function confirmarAdicionais() {
+  let totalExtra = 0;
+  let nomes = [];
 
-function addToCart(id) {
-  const product = productsData.find(p => p.id === id);
-  const item = cart.find(i => i.id === id);
-  if (item) item.qty++;
-  else cart.push({ ...product, qty: 1, obs: "" });
+  document.querySelectorAll("#lista-adicionais input:checked").forEach(i => {
+    totalExtra += Number(i.value);
+    nomes.push(i.dataset.name);
+  });
+
+  cart.push({
+    ...produtoSelecionado,
+    price: produtoSelecionado.price + totalExtra,
+    adicionais: nomes,
+    qty: 1
+  });
+
+  document.getElementById("modal-adicionais").classList.remove("open");
   updateCart();
-  showToast(`${product.name} adicionado!`, "success");
-}
-
-function removeFromCart(id) {
-  const index = cart.findIndex(i => i.id === id);
-  if (index > -1) {
-    const itemName = cart[index].name;
-    cart[index].qty--;
-    if (cart[index].qty <= 0) cart.splice(index, 1);
-    updateCart();
-    showToast(`${itemName} removido!`, "error");
-  }
-}
-
-function updateObs(id, val) {
-  const item = cart.find(i => i.id === id);
-  if (item) item.obs = val;
 }
 
 function updateCart() {
-  const itemsDiv = document.getElementById("cart-items");
-  if (!itemsDiv) return;
-  itemsDiv.innerHTML = "";
-  let subtotal = 0;
+  const div = document.getElementById("cart-items");
+  div.innerHTML = "";
 
-  cart.forEach(item => {
-    subtotal += item.price * item.qty;
-    itemsDiv.innerHTML += `
-      <div class="cart-item-card">
-        <div class="cart-item-info">
-          <strong>${item.name}</strong>
-          <span style="color: #27ae60; font-weight: bold;">R$ ${(item.price * item.qty).toFixed(2)}</span>
-        </div>
-        <input type="text" class="obs-input" placeholder="Observações (ex: sem cebola)"
-          value="${item.obs || ''}"
-          oninput="updateObs(${item.id}, this.value)">
-        <div class="cart-item-controls">
-          <button class="qty-btn-cart minus" onclick="removeFromCart(${item.id})">−</button>
-          <span class="qty-num">${item.qty}</span>
-          <button class="qty-btn-cart plus" onclick="addToCart(${item.id})">+</button>
-        </div>
-      </div>`;
-  });
-
-  const deliveryType = document.getElementById("delivery-type").value;
-  const delivery = deliveryType === "entrega" ? 5 : 0;
-  document.getElementById("cart-count").innerText = cart.reduce((a, b) => a + b.qty, 0);
-  document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
-}
-
-function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
-
-function toggleDeliveryFields() {
-  const isEntrega = document.getElementById("delivery-type").value === "entrega";
-  document.getElementById("address-fields").style.display = isEntrega ? "block" : "none";
-  updateCart();
-}
-
-function toggleTrocoField() {
-  const isDinheiro = document.getElementById("payment-method").value === "Dinheiro";
-  document.getElementById("troco-field").style.display = isDinheiro ? "block" : "none";
-}
-
-function finishOrder() {
-  if (cart.length === 0) return alert("Sua sacola está vazia!");
-  
-  const deliveryType = document.getElementById("delivery-type").value;
-  const paymentMethod = document.getElementById("payment-method").value;
-  
-  // Usando emojis normais. O segredo é o encodeURI no final.
-  let textoFinal = "🍔 *NOVO PEDIDO - LC BURGERS*\n\n";
-  
   cart.forEach(i => {
-    textoFinal += `✅ *${i.qty}x ${i.name}*\n`;
-    if (i.obs) textoFinal += `📝 _Obs: ${i.obs}_\n`;
-    textoFinal += `\n`;
+    div.innerHTML += `
+      <div>
+        <strong>${i.name}</strong><br>
+        ${i.adicionais ? "➕ " + i.adicionais.join(", ") : ""}
+        <br><b>R$ ${i.price.toFixed(2)}</b>
+      </div>
+    `;
   });
-
-  if (deliveryType === "entrega") {
-    const rua = document.getElementById("cart-rua").value;
-    const num = document.getElementById("cart-numero").value;
-    const bairro = document.getElementById("cart-vila").value;
-    const homeType = document.getElementById("home-type").value;
-    const ref = document.getElementById("cart-ponto-ref").value;
-
-    if(!rua || !num) return alert("Por favor, preencha o endereço de entrega!");
-    
-    textoFinal += `📍 *Entrega:*\n`;
-    textoFinal += `${rua}, ${num} - ${bairro}\n`;
-    textoFinal += `🏠 *Tipo:* ${homeType}\n`;
-    if(ref) textoFinal += `🗺️ *Ref:* ${ref}\n`;
-  } else {
-    textoFinal += `🏪 *Retirada no Balcão*\n`;
-  }
-
-  textoFinal += `\n💳 *Pagamento:* ${paymentMethod}\n`;
-  
-  const subtotal = cart.reduce((a, b) => a + b.price * b.qty, 0);
-  const taxa = deliveryType === "entrega" ? 5 : 0;
-  
-  textoFinal += `💰 *Total: R$ ${(subtotal + taxa).toFixed(2)}*`;
-  
-  const fone = "5543988230563";
-  // Usando encodeURI para garantir que o iOS entenda os emojis normais
-  const linkWhatsApp = `https://wa.me/${fone}?text=${encodeURIComponent(textoFinal)}`;
-  
-  window.open(linkWhatsApp);
 }
 
 document.addEventListener("DOMContentLoaded", renderProducts);
-
