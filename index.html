@@ -24,6 +24,28 @@
 
 <section class="products" id="products"></section>
 
+<div id="product-modal" class="modal">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeModal()">✕</button>
+    
+    <div id="modal-details">
+      </div>
+
+    <div class="modal-options">
+      <h3>Adicionais</h3>
+      <div id="modal-extras">
+        </div>
+
+      <h3>Observações</h3>
+      <textarea id="modal-obs" placeholder="Ex: Tirar cebola, ponto da carne, etc."></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button id="add-to-cart-btn" class="finish-btn">Adicionar à Sacola</button>
+    </div>
+  </div>
+</div>
+
 <button class="floating-cart" id="floating-cart" onclick="toggleCart()">
   🛍 <span id="cart-count">0</span>
 </button>
@@ -31,7 +53,10 @@
 <div class="cart" id="cart">
   <div class="cart-header">
     <h2>Sua Sacola</h2>
-    <button class="close-cart" onclick="toggleCart()">✕</button>
+    <div class="header-actions">
+        <button class="clear-cart" onclick="clearCart()">Limpar</button>
+        <button class="close-cart" onclick="toggleCart()">✕</button>
+    </div>
   </div>
 
   <div class="cart-scrollable-content">
