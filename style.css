@@ -35,7 +35,7 @@ body { background-color: #f4f4f4; padding-bottom: 100px; }
 }
 .product img { 
     width: 100%; height: 230px; 
-    object-fit: contain; /* Garante que o Logo apareça inteiro sem cortar */
+    object-fit: contain;
     background-color: #fff; 
     padding: 10px;
 }
@@ -48,14 +48,66 @@ body { background-color: #f4f4f4; padding-bottom: 100px; }
 }
 .product-footer span { font-size: 1.3rem; font-weight: 800; color: #27ae60; }
 
-/* BOTÕES DA VITRINE */
-.add-btn, .remove-btn { 
-    width: 38px; height: 38px; border-radius: 50%; border: none; 
-    color: white; cursor: pointer; font-size: 1.2rem; transition: transform 0.1s; 
+/* NOVO BOTÃO SELECIONAR */
+.select-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
 }
-.add-btn { background: #2ecc71; }
-.remove-btn { background: #e74c3c; }
-.add-btn:active, .remove-btn:active { transform: scale(0.9); }
+.select-btn:active { transform: scale(0.95); background: #219150; }
+
+/* MODAL DE DETALHES */
+#product-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: white;
+    width: 95%;
+    max-width: 500px;
+    max-height: 90vh;
+    border-radius: 25px;
+    overflow-y: auto;
+    position: relative;
+    padding: 0; /* Padding zero para a imagem encostar no topo */
+}
+.close-modal {
+    position: absolute; top: 15px; right: 15px;
+    background: rgba(0,0,0,0.5); color: white;
+    border: none; width: 35px; height: 35px;
+    border-radius: 50%; cursor: pointer; z-index: 10;
+}
+.modal-img-top {
+    width: 100%; height: 250px;
+    object-fit: cover; background: #fff;
+}
+.modal-details-padding { padding: 20px; }
+.modal-base-price { color: #27ae60; font-weight: 800; font-size: 1.4rem; margin-top: 10px; }
+
+/* ADICIONAIS NA MODAL */
+.modal-options { padding: 0 20px 20px; }
+.modal-options h3 { margin: 15px 0 10px; font-size: 1.1rem; border-bottom: 2px solid #f4f4f4; padding-bottom: 5px; }
+.extra-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px; border-bottom: 1px solid #eee; cursor: pointer;
+}
+.extra-item input { width: 20px; height: 20px; accent-color: #27ae60; }
+
+#modal-obs {
+    width: 100%; height: 80px; margin-top: 10px;
+    border: 1px solid #ddd; border-radius: 12px;
+    padding: 12px; resize: none; outline: none;
+}
 
 /* SACOLA FLUTUANTE */
 .floating-cart { 
@@ -79,37 +131,45 @@ body { background-color: #f4f4f4; padding-bottom: 100px; }
 .cart.open { right: 0; }
 .cart-header { padding: 20px; background: #111; color: white; display: flex; justify-content: space-between; align-items: center; }
 
+/* BOTÃO LIMPAR NA SACOLA */
+.header-actions { display: flex; gap: 10px; align-items: center; }
+.clear-cart {
+    background: #444; color: #fff; border: none;
+    padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;
+}
+
 .cart-scrollable-content { flex: 1; overflow-y: auto; padding: 15px; }
 
 /* CARDS DE ITENS NA SACOLA */
 .cart-item-card { 
-    background: #fff; padding: 18px; border-radius: 12px; 
+    background: #fff; padding: 15px; border-radius: 12px; 
     margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-    border-left: 6px solid #e74c3c; 
+    border-left: 6px solid #27ae60; 
 }
-.cart-item-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cart-item-info { margin-bottom: 8px; }
+.cart-item-info strong { display: block; font-size: 1rem; }
+.cart-item-info small { color: #777; font-size: 0.85rem; }
+.cart-obs { font-style: italic; color: #555; font-size: 0.85rem; margin-top: 5px; }
+.cart-item-price { display: block; color: #27ae60; font-weight: bold; margin-top: 5px; }
 
-.obs-input { 
-    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; 
-    background: #fdfdfd; font-size: 0.95rem; margin-bottom: 15px; outline: none;
+.remove-item-btn {
+    background: none; border: none; color: #e74c3c;
+    font-weight: bold; cursor: pointer; font-size: 0.85rem; padding: 5px 0;
 }
-.obs-input:focus { border-color: #27ae60; }
 
-.cart-item-controls { display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
-
-.qty-btn-cart { 
-    width: 35px; height: 35px; border-radius: 8px; border: none; 
-    color: white; font-size: 1.2rem; cursor: pointer; transition: transform 0.1s; 
+/* FOOTER DA SACOLA */
+.cart-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; }
+.finish-btn { 
+    width: 100%; padding: 18px; background: #27ae60; color: white; 
+    border: none; border-radius: 35px; font-weight: bold; cursor: pointer; 
+    font-size: 1.1rem; transition: background 0.3s;
 }
-.qty-btn-cart.minus { background: #e74c3c; }
-.qty-btn-cart.plus { background: #2ecc71; }
-.qty-btn-cart:active { transform: scale(0.85); }
 
-/* MENSAGENS TOAST (FEEDBACK) */
+/* FEEDBACKS (TOAST) */
 .toast-msg {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
     padding: 12px 25px; border-radius: 30px; color: white; font-weight: bold;
-    z-index: 1001; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+    z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
     animation: fadeInOut 2s ease-in-out forwards;
 }
 .toast-success { background-color: #2ecc71; }
@@ -122,19 +182,9 @@ body { background-color: #f4f4f4; padding-bottom: 100px; }
     100% { opacity: 0; top: 0; }
 }
 
-/* CAMPOS DE ENDEREÇO E PAGAMENTO */
+/* CAMPOS EXTRAS */
 .cart-section-card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-.cart-section-card h4 { margin-bottom: 10px; font-size: 1rem; color: #333; }
 .cart-section-card input, .cart-section-card select { 
     width: 100%; padding: 12px; margin-top: 8px; 
     border: 1px solid #eee; border-radius: 8px; font-size: 1rem;
 }
-
-/* FOOTER DA SACOLA */
-.cart-footer { padding: 20px; background: #fff; border-top: 1px solid #eee; }
-.finish-btn { 
-    width: 100%; padding: 18px; background: #27ae60; color: white; 
-    border: none; border-radius: 35px; font-weight: bold; cursor: pointer; 
-    font-size: 1.1rem; transition: background 0.3s;
-}
-.finish-btn:hover { background: #219150;
