@@ -32,14 +32,15 @@
 
             <div class="modal-options">
                 <h3>Adicionais</h3>
-                <div id="modal-extras"></div>
+                <div id="modal-extras">
+                    </div>
 
                 <h3>Observações</h3>
                 <textarea id="modal-obs" placeholder="Ex: Tirar cebola..."></textarea>
             </div>
 
             <div class="modal-footer">
-                <div id="modal-total-footer">Total: R$ 0,00</div>
+                <div id="modal-total-display" class="modal-total-price">Total: R$ 0,00</div>
                 <button id="add-to-cart-btn" class="finish-btn">Adicionar à Sacola</button>
             </div>
         </div>
@@ -71,6 +72,10 @@
                         <input type="text" id="cart-numero" placeholder="Nº">
                         <input type="text" id="cart-vila" placeholder="Vila / Bairro">
                     </div>
+                    <select id="home-type">
+                        <option value="Casa">Casa</option>
+                        <option value="Apartamento">Apartamento</option>
+                    </select>
                     <input type="text" id="cart-ponto-ref" placeholder="Ponto de referência">
                 </div>
             </div>
@@ -91,7 +96,7 @@
         <div class="cart-footer">
             <div id="cart-total">Total: R$ 0,00</div>
             <button onclick="clearCart()" class="clear-cart-btn">Limpar Sacola</button>
-            <button onclick="finishOrder()" class="finish-btn">Concluir Pedido</button>
+            <button onclick="finishOrder()" class="finish-btn">Concluir Pedido no WhatsApp</button>
         </div>
     </div>
 
