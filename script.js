@@ -1,40 +1,51 @@
 const productsData = [
-    // TRADICIONAIS
-    { id: 1, name: "BACON BURGER", desc: "Pão brioche, hambúrguer gourmet, bacon, barbecue, queijo mussarela, alface, tomate. (Acompanha fritas)", price: 27.00, category: "tradicionais", img: "BACON-BURGER.png" },
-    { id: 2, name: "SALADA BURGER", desc: "Pão brioche, hambúrguer gourmet, tomate, alface, vinagrete, maionese verde, queijo mussarela.", price: 25.00, category: "tradicionais", img: "SALADA-BURGER.png" },
-    { id: 3, name: "CALABRESA BURGER", desc: "Pão brioche, hambúrguer gourmet, queijo mussarela, calabresa, alface, tomate, cebola, maionese da casa.", price: 23.00, category: "tradicionais", img: "CALABRESA-BURGER.png" },
-    { id: 4, name: "EGG BURGER", desc: "Pão brioche, hambúrguer gourmet, tomate, alface, ovo, queijo mussarela.", price: 22.00, category: "tradicionais", img: "EGG-BURGER.png" },
-    { id: 5, name: "CHESE BURGER", desc: "Pão brioche, hambúrguer gourmet, batata palha, queijo mussarela, requeijão, maionese caseira.", price: 20.00, category: "tradicionais", img: "CHESE-BURGER.png" },
-    { id: 6, name: "BURGER", desc: "Pão brioche, hambúrguer gourmet, maionese da casa.", price: 15.00, category: "tradicionais", img: "BURGER.png" },
-    
-    // GOURMETS
-    { id: 7, name: "COLOSSAL BURGER", desc: "Pão brioche, hambúrguer gourmet premium, frango empanado, alface, tomate, bacon, calabresa, ovo, queijo cheddar.", price: 40.00, category: "gourmets", img: "COLOSSAL-BURGER.png" },
-    { id: 8, name: "CHICKEN BURGER", desc: "Pão brioche, frango empanado, maionese caseira, molho barbecue, batata palha, queijo cheddar.", price: 35.00, category: "gourmets", img: "CHICKEN-BURGER.png" },
-    { id: 9, name: "TROPICAL BURGER", desc: "Pão brioche, hambúrguer gourmet premium, alface, queijo cheddar, queijo coalho com mel, abacaxi, bacon.", price: 35.00, category: "gourmets", img: "TROPICAL-BURGER.png" },
-    { id: 10, name: "CALIENTE BURGER", desc: "Pão brioche, hambúrguer gourmet premium, queijo cheddar, maionese caseira, tomate, doritos.", price: 33.00, category: "gourmets", img: "CALIENTE-BURGER.png" },
-    { id: 11, name: "ACEBOLADO BURGER", desc: "Pão brioche, hambúrguer gourmet premium, cebola caramelizada, maionese caseira, queijo cheddar.", price: 32.00, category: "gourmets", img: "ACEBOLADO-BURGER.png" },
-    { id: 12, name: "BARBECUE BURGER", desc: "Pão brioche, 2 hambúrgueres de linguiça, queijo coalho, queijo cheddar, vinagrete, extra de barbecue.", price: 30.00, category: "gourmets", img: "BARBECUE-BURGER.png" },
-    
-    // BEBIDAS
-    { id: 14, name: "Coca-Cola Lata", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA.png" },
-    { id: 15, name: "Coca-Cola Lata Zero", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA-ZERO.png" },
-    { id: 16, name: "Guaraná Antarctica Lata", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "GUARANA-LATA.png" },
-    { id: 17, name: "Coca-Cola 1L", desc: "Garrafa 1L gelada", price: 12.00, category: "bebidas", img: "COCA-1L.png" },
-    { id: 18, name: "Coca-Cola 1L Zero", desc: "Garrafa 1L gelada", price: 12.00, category: "bebidas", img: "COCA-1L-ZERO.png" }
+  // TRADICIONAIS
+  { id: 1, name: "BACON BURGER", desc: "Pão brioche, hambúrguer gourmet, bacon, barbecue, queijo mussarela, alface, tomate. (Acompanha fritas)", price: 27.00, category: "tradicionais", img: "BACON-BURGER.png" },
+  { id: 2, name: "SALADA BURGER", desc: "Pão brioche, hambúrguer gourmet, tomate, alface, vinagrete, maionese verde, queijo mussarela.", price: 25.00, category: "tradicionais", img: "SALADA-BURGER.png" },
+  { id: 3, name: "CALABRESA BURGER", desc: "Pão brioche, hambúrguer gourmet, queijo mussarela, calabresa, alface, tomate, cebola, maionese da casa.", price: 23.00, category: "tradicionais", img: "CALABRESA-BURGER.png" },
+  { id: 4, name: "EGG BURGER", desc: "Pão brioche, hambúrguer gourmet, tomate, alface, ovo, queijo mussarela.", price: 22.00, category: "tradicionais", img: "EGG-BURGER.png" },
+  { id: 5, name: "CHESE BURGER", desc: "Pão brioche, hambúrguer gourmet, batata palha, queijo mussarela, requeijão, maionese caseira.", price: 20.00, category: "tradicionais", img: "CHESE-BURGER.png" },
+  { id: 6, name: "BURGER", desc: "Pão brioche, hambúrguer gourmet, maionese da casa.", price: 15.00, category: "tradicionais", img: "BURGER.png" },
+
+  // GOURMETS
+  { id: 7, name: "COLOSSAL BURGER", desc: "Pão brioche, hambúrguer gourmet premium, frango empanado, alface, tomate, bacon, calabresa, ovo, queijo cheddar.", price: 40.00, category: "gourmets", img: "COLOSSAL-BURGER.png" },
+  { id: 8, name: "CHICKEN BURGER", desc: "Pão brioche, frango empanado, maionese caseira, molho barbecue, batata palha, queijo cheddar.", price: 35.00, category: "gourmets", img: "CHICKEN-BURGER.png" },
+  { id: 9, name: "TROPICAL BURGER", desc: "Pão brioche, hambúrguer gourmet premium, alface, queijo cheddar, queijo coalho com mel, abacaxi, bacon.", price: 35.00, category: "gourmets", img: "TROPICAL-BURGER.png" },
+  { id: 10, name: "CALIENTE BURGER", desc: "Pão brioche, hambúrguer gourmet premium, queijo cheddar, maionese caseira, tomate, doritos.", price: 33.00, category: "gourmets", img: "CALIENTE-BURGER.png" },
+  { id: 11, name: "ACEBOLADO BURGER", desc: "Pão brioche, hambúrguer gourmet premium, cebola caramelizada, maionese caseira, queijo cheddar.", price: 32.00, category: "gourmets", img: "ACEBOLADO-BURGER.png" },
+  { id: 12, name: "BARBECUE BURGER", desc: "Pão brioche, 2 hambúrgueres de linguiça, queijo coalho, queijo cheddar, vinagrete, extra de barbecue.", price: 30.00, category: "gourmets", img: "BARBECUE-BURGER.png" },
+
+  // BEBIDAS
+  { id: 14, name: "Coca-Cola Lata", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA.png" },
+  { id: 15, name: "Coca-Cola Lata Zero Açúcar", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA-ZERO.png" },
+  { id: 16, name: "Guaraná Antarctica Lata", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "GUARANA-LATA.png" },
+  { id: 17, name: "Coca-Cola 1L", desc: "Garrafa 1L gelada", price: 12.00, category: "bebidas", img: "COCA-1L.png" },
+  { id: 18, name: "Coca-Cola 1L Zero Açúcar", desc: "Garrafa 1L gelada", price: 12.00, category: "bebidas", img: "COCA-1L-ZERO.png" }
 ];
 
 const extrasData = [
-    { name: "Frango Empanado", price: 12.00 }, { name: "Hambúrguer de Linguiça", price: 10.00 },
-    { name: "Hambúrguer Tradicional", price: 8.00 }, { name: "Hambúrguer Gourmet", price: 10.00 },
-    { name: "Cheddar", price: 4.00 }, { name: "Queijo Mussarela", price: 3.00 },
-    { name: "Queijo Coalho", price: 5.00 }, { name: "Queijo Coalho c/ Mel", price: 6.00 },
-    { name: "Calabresa", price: 6.00 }, { name: "Maionese C.", price: 2.00 },
-    { name: "Cebola", price: 2.00 }, { name: "Ovo", price: 4.00 },
-    { name: "Bacon", price: 6.00 }, { name: "Batata Palha", price: 3.00 },
-    { name: "Requeijão", price: 4.00 }, { name: "Barbecue", price: 4.00 },
-    { name: "Alface", price: 2.00 }, { name: "Tomate", price: 2.00 },
-    { name: "Vinagrete", price: 3.00 }, { name: "Doritos", price: 5.00 },
-    { name: "Geleia", price: 3.00 }, { name: "Cebola Caramelizada", price: 5.00 },
+    { name: "Frango Empanado", price: 12.00 },
+    { name: "Hambúrguer de Linguiça", price: 10.00 },
+    { name: "Hambúrguer Tradicional", price: 8.00 },
+    { name: "Hambúrguer Gourmet", price: 10.00 },
+    { name: "Cheddar", price: 4.00 },
+    { name: "Queijo Mussarela", price: 3.00 },
+    { name: "Queijo Coalho", price: 5.00 },
+    { name: "Queijo Coalho c/ Mel", price: 6.00 },
+    { name: "Calabresa", price: 6.00 },
+    { name: "Maionese C.", price: 2.00 },
+    { name: "Cebola", price: 2.00 },
+    { name: "Ovo", price: 4.00 },
+    { name: "Bacon", price: 6.00 },
+    { name: "Batata Palha", price: 3.00 },
+    { name: "Requeijão", price: 4.00 },
+    { name: "Barbecue", price: 4.00 },
+    { name: "Alface", price: 2.00 },
+    { name: "Tomate", price: 2.00 },
+    { name: "Vinagrete", price: 3.00 },
+    { name: "Doritos", price: 5.00 },
+    { name: "Geleia", price: 3.00 },
+    { name: "Cebola Caramelizada", price: 5.00 },
     { name: "Abacaxi", price: 5.00 }
 ];
 
@@ -42,92 +53,212 @@ let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
+function showToast(message, type = "success") {
+    const oldToast = document.querySelector(".toast-msg");
+    if (oldToast) oldToast.remove();
+    const toast = document.createElement("div");
+    toast.className = `toast-msg ${type === "success" ? "toast-success" : "toast-error"}`;
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 2000);
+}
+
 function renderProducts() {
-    const container = document.getElementById("products");
-    container.innerHTML = "";
-    productsData.filter(p => p.category === currentCategory).forEach(p => {
-        container.innerHTML += `
-            <div class="product-card">
-                <img src="${p.img}" onerror="this.src='Logo.png'">
-                <div class="product-info">
-                    <h3>${p.name}</h3>
-                    <p>${p.desc}</p>
-                    <div class="price">R$ ${p.price.toFixed(2)}</div>
-                    <button class="finish-btn" onclick="openProductModal(${p.id})">Selecionar</button>
-                </div>
-            </div>`;
-    });
+  const container = document.getElementById("products");
+  if (!container) return;
+  container.innerHTML = "";
+  const filtered = productsData.filter(p => p.category === currentCategory);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="coming-soon">
+        <h2>🍔 Em breve...</h2>
+        <p>Estamos preparando combos incríveis para você!</p>
+      </div>`;
+    return;
+  }
+
+  filtered.forEach(p => {
+    container.innerHTML += `
+      <div class="product">
+        <img src="${p.img}" onerror="this.src='Logo.png'">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="product-footer">
+          <span>R$ ${p.price.toFixed(2)}</span>
+          <button class="select-btn" onclick="openProductModal(${p.id})">Selecionar lanche</button>
+        </div>
+      </div>`;
+  });
 }
 
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
-    document.getElementById("modal-details").innerHTML = `<h2>${selectedProduct.name}</h2><p>${selectedProduct.desc}</p>`;
     document.getElementById("modal-obs").value = "";
     
+    document.getElementById("modal-details").innerHTML = `
+        <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
+        <div class="modal-header-text">
+            <h2>${selectedProduct.name}</h2>
+            <p>${selectedProduct.desc}</p>
+        </div>
+    `;
+
     const extrasDiv = document.getElementById("modal-extras");
     extrasDiv.innerHTML = "";
     if(selectedProduct.category !== 'bebidas') {
-        extrasData.forEach(ex => {
+        extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
-                <div class="extra-item">
-                    <label style="display:flex; align-items:center; cursor:pointer;">
-                        <input type="checkbox" class="extra-check" data-price="${ex.price}" value="${ex.name}" onchange="updateModalPrice()"> 
-                        ${ex.name}
-                    </label>
-                    <span>+ R$ ${ex.price.toFixed(2)}</span>
-                </div>`;
+                <label class="extra-item">
+                    <div style="display:flex; align-items:center;">
+                        <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}" onchange="updateModalPrice()">
+                        <span>${extra.name}</span>
+                    </div>
+                    <span>+ R$ ${extra.price.toFixed(2)}</span>
+                </label>`;
         });
     }
-    updateModalPrice();
+
+    const footer = document.querySelector(".modal-footer");
+    const priceDisplay = document.querySelector(".modal-base-price");
+    if (priceDisplay) priceDisplay.remove(); 
+    
+    const newPriceTag = document.createElement("p");
+    newPriceTag.className = "modal-base-price";
+    newPriceTag.style.textAlign = "center";
+    newPriceTag.style.marginBottom = "15px";
+    newPriceTag.innerHTML = `Total: R$ ${selectedProduct.price.toFixed(2)}`;
+    footer.insertBefore(newPriceTag, document.getElementById("add-to-cart-btn"));
+
     document.getElementById("product-modal").style.display = "flex";
+    document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
 }
 
 function updateModalPrice() {
     let total = selectedProduct.price;
-    document.querySelectorAll('.extra-check:checked').forEach(c => total += parseFloat(c.dataset.price));
-    document.getElementById("modal-total-display").innerText = `Total: R$ ${total.toFixed(2)}`;
+    const checks = document.querySelectorAll('.extra-check:checked');
+    checks.forEach(c => {
+        total += parseFloat(c.getAttribute('data-price'));
+    });
+    document.querySelector(".modal-base-price").innerHTML = `Total: R$ ${total.toFixed(2)}`;
 }
 
+function closeModal() { document.getElementById("product-modal").style.display = "none"; }
+
 function addToCartFromModal() {
-    const checks = document.querySelectorAll('.extra-check:checked');
-    const extras = Array.from(checks).map(c => ({ name: c.value, price: parseFloat(c.dataset.price) }));
-    const totalItem = selectedProduct.price + extras.reduce((a, b) => a + b.price, 0);
-    cart.push({ ...selectedProduct, cartId: Date.now(), extras, totalPrice: totalItem, obs: document.getElementById("modal-obs").value });
-    updateCart(); closeModal();
+    const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
+        name: el.value,
+        price: parseFloat(el.getAttribute('data-price'))
+    }));
+    const obs = document.getElementById("modal-obs").value;
+    const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
+    cart.push({
+        ...selectedProduct,
+        cartId: Date.now(),
+        extras: selectedExtras,
+        obs: obs,
+        totalPrice: selectedProduct.price + extrasTotal,
+        qty: 1
+    });
+    updateCart();
+    closeModal();
+    showToast(`${selectedProduct.name} na sacola!`);
+}
+
+function filterCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll(".category-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`));
+  });
+  renderProducts();
+}
+
+function removeFromCart(cartId) {
+    const index = cart.findIndex(i => i.cartId === cartId);
+    if (index > -1) {
+        cart.splice(index, 1);
+        updateCart();
+        showToast("Item removido", "error");
+    }
+}
+
+function clearCart() {
+    if(cart.length === 0) return;
+    if(confirm("Deseja limpar toda a sacola?")) {
+        cart = [];
+        updateCart();
+        showToast("Você limpou sua Sacola", "error");
+    }
 }
 
 function updateCart() {
-    const itemsDiv = document.getElementById("cart-items");
-    itemsDiv.innerHTML = "";
-    let subtotal = 0;
-    cart.forEach(item => {
-        subtotal += item.totalPrice;
-        itemsDiv.innerHTML += `<div class="cart-section-card">
-            <strong>${item.name}</strong><br><small>${item.extras.map(e => e.name).join(', ') || 'Sem adicionais'}</small>
-            <div style="color:#27ae60; font-weight:bold">R$ ${item.totalPrice.toFixed(2)}</div>
-            <button onclick="removeFromCart(${item.cartId})" style="color:red; border:none; background:none; cursor:pointer">Remover</button>
-        </div>`;
-    });
-    const taxa = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
-    document.getElementById("cart-total").innerText = `Total: R$ ${(subtotal + taxa).toFixed(2)}`;
-    document.getElementById("cart-count").innerText = cart.length;
+  const itemsDiv = document.getElementById("cart-items");
+  if (!itemsDiv) return;
+  itemsDiv.innerHTML = "";
+  let subtotal = 0;
+  cart.forEach(item => {
+    subtotal += item.totalPrice;
+    const extrasHtml = item.extras.length > 0 ? `<small>+ ${item.extras.map(e => e.name).join(', ')}</small>` : '';
+    const obsHtml = item.obs ? `<div class="cart-obs">📝 ${item.obs}</div>` : '';
+    itemsDiv.innerHTML += `
+      <div class="cart-item-card">
+        <div class="cart-item-info">
+          <div><strong>${item.name}</strong>${extrasHtml}${obsHtml}</div>
+          <span class="cart-item-price">R$ ${item.totalPrice.toFixed(2)}</span>
+        </div>
+        <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">Remover</button>
+      </div>`;
+  });
+  const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
+  document.getElementById("cart-count").innerText = cart.length;
+  document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
+}
+
+function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
+function toggleDeliveryFields() {
+    document.getElementById("address-fields").style.display = document.getElementById("delivery-type").value === "entrega" ? "block" : "none";
+    updateCart();
+}
+function toggleTrocoField() {
+    document.getElementById("troco-field").style.display = document.getElementById("payment-method").value === "Dinheiro" ? "block" : "none";
 }
 
 function finishOrder() {
-    if(!cart.length) return alert("Sacola vazia!");
-    let msg = "*PEDIDO LC BURGERS*\n\n";
-    cart.forEach(i => msg += `*${i.name}*\nAdicionais: ${i.extras.map(e => e.name).join(', ') || 'Nenhum'}\nObs: ${i.obs}\nValor: R$ ${i.totalPrice.toFixed(2)}\n\n`);
-    msg += `*${document.getElementById("cart-total").innerText}*`;
-    window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(msg)}`);
+  if (cart.length === 0) return alert("Sua sacola está vazia!");
+  
+  let textoFinal = "PEDIDO - LC BURGERS\n";
+  textoFinal += "--------------------------\n\n";
+
+  cart.forEach(i => {
+    textoFinal += `ITEM: ${i.name}\n`;
+    if (i.extras.length > 0) {
+      textoFinal += `ADICIONAIS: ${i.extras.map(e => e.name).join(', ')}\n`;
+    }
+    if (i.obs) {
+      textoFinal += `OBS: ${i.obs}\n`;
+    }
+    textoFinal += `VALOR: R$ ${i.totalPrice.toFixed(2)}\n\n`;
+  });
+
+  textoFinal += "--------------------------\n";
+  
+  const deliveryType = document.getElementById("delivery-type").value;
+  if (deliveryType === "entrega") {
+    textoFinal += "FORMA DE ENTREGA: Entrega no Endereco\n";
+    textoFinal += `ENDERECO: ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
+    textoFinal += `BAIRRO: ${document.getElementById("cart-vila").value}\n`;
+    textoFinal += `TIPO: ${document.getElementById("home-type").value}\n`;
+  } else { 
+    textoFinal += "FORMA DE ENTREGA: Retirada no Balcao\n"; 
+  }
+
+  const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
+  const taxa = deliveryType === "entrega" ? 5 : 0;
+  
+  textoFinal += `\nFORMA DE PAGAMENTO: ${document.getElementById("payment-method").value}\n`;
+  textoFinal += `TOTAL DO PEDIDO: R$ ${(subtotal + taxa).toFixed(2)}`;
+
+  window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
 }
 
-function filterCategory(c) { currentCategory = c; renderProducts(); }
-function closeModal() { document.getElementById("product-modal").style.display = "none"; }
-function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
-function removeFromCart(id) { cart = cart.filter(i => i.cartId !== id); updateCart(); }
-function clearCart() { cart = []; updateCart(); }
-function toggleDeliveryFields() { document.getElementById("address-fields").style.display = document.getElementById("delivery-type").value === "entrega" ? "block" : "none"; updateCart(); }
-function toggleTrocoField() { document.getElementById("troco-field").style.display = document.getElementById("payment-method").value === "Dinheiro" ? "block" : "none"; }
-
-document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
 document.addEventListener("DOMContentLoaded", renderProducts);
