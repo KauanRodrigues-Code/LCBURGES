@@ -1,105 +1,99 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LC BURGERS</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>LC BURGERS</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="header-content">
-            <h1>LC BURGERS</h1>
-            <p>De Terça a Domingo • 18:00 às 23:00</p>
-        </div>
-    </header>
+<header class="main-header">
+  <div class="header-content">
+    <h1>LC BURGERS</h1>
+    <p>De Terça a Domingo • 18:00 às 23:00</p>
+  </div>
+</header>
 
-    <section class="categories">
-        <button class="category-btn active" onclick="filterCategory('tradicionais')">Tradicionais</button>
-        <button class="category-btn" onclick="filterCategory('gourmets')">Gourmets</button>
-        <button class="category-btn" onclick="filterCategory('combos')">Combos</button>
-        <button class="category-btn" onclick="filterCategory('bebidas')">Bebidas</button>
-    </section>
+<section class="categories">
+  <button class="category-btn active" onclick="filterCategory('tradicionais')">Tradicionais</button>
+  <button class="category-btn" onclick="filterCategory('gourmets')">Gourmets</button>
+  <button class="category-btn" onclick="filterCategory('combos')">Combos</button>
+  <button class="category-btn" onclick="filterCategory('bebidas')">Bebidas</button>
+</section>
 
-    <section class="products" id="products"></section>
+<section class="products" id="products"></section>
 
-    <div id="product-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal()">✕</button>
-            
-            <div id="modal-details"></div>
+<div id="product-modal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeModal()">✕</button>
+    <div id="modal-details"></div>
+    <div class="modal-options">
+      <h3>Adicionais</h3>
+      <div id="modal-extras"></div>
+      <h3>Observações</h3>
+      <textarea id="modal-obs" placeholder="Ex: Tirar cebola, ponto da carne, etc."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button id="add-to-cart-btn" class="finish-btn">Adicionar à Sacola</button>
+    </div>
+  </div>
+</div>
 
-            <div class="modal-options">
-                <h3>Adicionais</h3>
-                <div id="modal-extras">
-                    </div>
+<button class="floating-cart" id="floating-cart" onclick="toggleCart()">
+  🛍 <span id="cart-count">0</span>
+</button>
 
-                <h3>Observações</h3>
-                <textarea id="modal-obs" placeholder="Ex: Tirar cebola..."></textarea>
+<div class="cart" id="cart">
+  <div class="cart-header">
+    <h2>Sua Sacola</h2>
+    <button class="close-cart" onclick="toggleCart()">✕</button>
+  </div>
+
+  <div class="cart-scrollable-content">
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-extra-fields">
+        <div class="cart-section-card">
+            <h3>📍 Entrega</h3>
+            <select id="delivery-type" onchange="toggleDeliveryFields()">
+                <option value="entrega">Preciso de Entrega (Taxa R$ 5,00)</option>
+                <option value="retirada">Vou retirar no Balcão</option>
+            </select>
+            <div id="address-fields">
+                <input type="text" id="cart-rua" placeholder="Nome da Rua">
+                <div class="input-row">
+                    <input type="text" id="cart-numero" placeholder="Nº">
+                    <input type="text" id="cart-vila" placeholder="Vila / Bairro">
+                </div>
+                <select id="home-type">
+                    <option value="Casa">Casa</option>
+                    <option value="Apartamento">Apartamento</option>
+                </select>
+                <input type="text" id="cart-ponto-ref" placeholder="Ponto de referência">
             </div>
-
-            <div class="modal-footer">
-                <div id="modal-total-display" class="modal-total-price">Total: R$ 0,00</div>
-                <button id="add-to-cart-btn" class="finish-btn">Adicionar à Sacola</button>
+        </div>
+        <div class="cart-section-card">
+            <h3>💳 Pagamento</h3>
+            <select id="payment-method" onchange="toggleTrocoField()">
+                <option value="Pix">Pix</option>
+                <option value="Cartão">Cartão (Maquininha)</option>
+                <option value="Dinheiro">Dinheiro</option>
+            </select>
+            <div id="troco-field" style="display: none; margin-top: 10px;">
+                <input type="text" id="cart-troco" placeholder="Troco para quanto?">
             </div>
         </div>
     </div>
+  </div>
 
-    <button class="floating-cart" id="floating-cart" onclick="toggleCart()">
-        🛍 <span id="cart-count">0</span>
-    </button>
+  <div class="cart-footer">
+    <div id="cart-total"></div> 
+    <button onclick="clearCart()" class="clear-cart-btn">Limpar Sacola</button>
+    <button onclick="finishOrder()" class="finish-btn">Concluir Pedido no WhatsApp</button>
+  </div>
+</div>
 
-    <div class="cart" id="cart">
-        <div class="cart-header">
-            <h2>Sua Sacola</h2>
-            <button class="close-cart" onclick="toggleCart()">✕</button>
-        </div>
-
-        <div class="cart-scrollable-content">
-            <div id="cart-items"></div>
-
-            <div class="cart-section-card">
-                <h3>📍 Entrega</h3>
-                <select id="delivery-type" onchange="toggleDeliveryFields()">
-                    <option value="entrega">Preciso de Entrega (Taxa R$ 5,00)</option>
-                    <option value="retirada">Vou retirar no Balcão</option>
-                </select>
-
-                <div id="address-fields">
-                    <input type="text" id="cart-rua" placeholder="Nome da Rua">
-                    <div class="input-row">
-                        <input type="text" id="cart-numero" placeholder="Nº">
-                        <input type="text" id="cart-vila" placeholder="Vila / Bairro">
-                    </div>
-                    <select id="home-type">
-                        <option value="Casa">Casa</option>
-                        <option value="Apartamento">Apartamento</option>
-                    </select>
-                    <input type="text" id="cart-ponto-ref" placeholder="Ponto de referência">
-                </div>
-            </div>
-
-            <div class="cart-section-card">
-                <h3>💳 Pagamento</h3>
-                <select id="payment-method" onchange="toggleTrocoField()">
-                    <option value="Pix">Pix</option>
-                    <option value="Cartão">Cartão</option>
-                    <option value="Dinheiro">Dinheiro</option>
-                </select>
-                <div id="troco-field" style="display: none; margin-top: 10px;">
-                    <input type="text" id="cart-troco" placeholder="Troco para quanto?">
-                </div>
-            </div>
-        </div>
-
-        <div class="cart-footer">
-            <div id="cart-total">Total: R$ 0,00</div>
-            <button onclick="clearCart()" class="clear-cart-btn">Limpar Sacola</button>
-            <button onclick="finishOrder()" class="finish-btn">Concluir Pedido no WhatsApp</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
+ ve se ta certo
