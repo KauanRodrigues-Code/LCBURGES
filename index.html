@@ -76,7 +76,7 @@
             <h3>💳 Pagamento</h3>
             <select id="payment-method" onchange="toggleTrocoField()">
                 <option value="Pix">Pix</option>
-                <option value="Cartão">Cartão (Maquininha)</option>
+                <option value="Cartão">Cartão</option>
                 <option value="Dinheiro">Dinheiro</option>
             </select>
             <div id="troco-field" style="display: none; margin-top: 10px;">
@@ -87,7 +87,7 @@
   </div>
 
   <div class="cart-footer">
-    <div id="cart-total"></div> 
+    <div id="cart-total">Total: R$ 0,00</div> 
     <button onclick="clearCart()" class="clear-cart-btn">Limpar Sacola</button>
     <button onclick="finishOrder()" class="finish-btn">Concluir Pedido no WhatsApp</button>
   </div>
