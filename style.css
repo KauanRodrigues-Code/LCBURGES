@@ -112,15 +112,31 @@ input, select, textarea { font-size: 16px !important; }
 .cart-item-price { color: #27ae60; font-weight: bold; }
 .remove-item-btn { background: none; border: none; color: #e74c3c; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-/* BOTÕES RODAPÉ SACCOLA AJUSTADOS */
-.cart-footer { padding: 15px 20px; background: #fff; border-top: 1px solid #eee; }
+/* BOTÕES RODAPÉ SACCOLA - PADRONIZADOS E MENORES */
+.cart-footer { padding: 12px 20px; background: #fff; border-top: 1px solid #eee; }
+.clear-cart-btn, .finish-btn {
+    width: 100%;
+    border: none;
+    border-radius: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .clear-cart-btn {
-    width: 100%; padding: 10px; background: #e74c3c; color: white;
-    border: none; border-radius: 35px; font-weight: bold; cursor: pointer; margin-bottom: 8px; font-size: 0.9rem;
+    padding: 8px; 
+    background: #e74c3c; 
+    color: white;
+    margin-bottom: 8px; 
+    font-size: 0.85rem;
 }
 .finish-btn { 
-    width: 100%; padding: 12px; background: #27ae60; color: white; 
-    border: none; border-radius: 35px; font-weight: bold; cursor: pointer; font-size: 1rem;
+    padding: 10px; 
+    background: #27ae60; 
+    color: white; 
+    font-size: 0.95rem;
 }
 
 /* FEEDBACK (TOAST) */
