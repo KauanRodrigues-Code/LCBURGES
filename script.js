@@ -187,7 +187,7 @@ function updateCart() {
   });
 
   const deliveryType = document.getElementById("delivery-type").value;
-  const taxaEntrega = deliveryType === "entrega" ? 5 : 0;
+  const taxaEntrega = deliveryType === "entrega" ? 7 : 0;
   
   document.getElementById("cart-count").innerText = cart.length;
   document.getElementById("cart-total").innerHTML = `<h3>Total: R$ ${(subtotal + taxaEntrega).toFixed(2)}</h3>`;
