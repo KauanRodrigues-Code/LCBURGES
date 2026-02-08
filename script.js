@@ -272,7 +272,7 @@ function finishOrder() {
   }
 
   const subtotalGeral = cart.reduce((acc, obj) => acc + obj.totalPrice, 0);
-  const taxaEntrega = deliveryType === "entrega" ? 5 : 0;
+  const taxaEntrega = deliveryType === "entrega" ? 7 : 0;
   const totalGeral = subtotalGeral + taxaEntrega;
   
   const pagamento = document.getElementById("payment-method").value;
