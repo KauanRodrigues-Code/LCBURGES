@@ -300,7 +300,7 @@ function finishOrder() {
 
   textoFinal += `\n*TOTAL DO PEDIDO: R$ ${totalGeral.toFixed(2)}*`;
 
-  window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
+  window.open(`https://wa.me/5543999225202?text=${encodeURIComponent(textoFinal)}`);
 }
 
 // Inicializa o site
