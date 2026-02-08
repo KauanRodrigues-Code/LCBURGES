@@ -40,13 +40,14 @@ let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
-// --- FUNÇÃO DE HORÁRIO ---
+// --- LÓGICA DE HORÁRIO ---
 function isStoreOpen() {
     const data = new Date();
     const hora = data.getHours();
-    const dia = data.getDay(); // 0 = Domingo, 1 = Segunda...
-    if (dia === 1) return false; // Fechado na Segunda
-    return hora >= 18 && hora < 24; // Aberto das 18h às 00h
+    const dia = data.getDay(); // 0 = Dom, 1 = Seg, 2 = Ter...
+
+    if (dia === 1) return false; // TOTALMENTE FECHADO NA SEGUNDA
+    return hora >= 18 && hora < 24; // ABERTO DAS 18h às 00h
 }
 
 function updateStoreStatus() {
@@ -55,20 +56,21 @@ function updateStoreStatus() {
 
     if (!isStoreOpen()) {
         bar.style.backgroundColor = "#ff4b4b";
-        bar.innerText = "🔴 FECHADO - Atendimento das 18:00 às 00:00";
+        bar.innerText = "🔴 FECHADO - Atendimento das 18:00 às 00:00 (Terça a Domingo)";
     } else {
         bar.style.backgroundColor = "#2ecc71";
         bar.innerText = "🟢 ABERTO - Faça seu pedido!";
     }
 }
 
+// --- FUNÇÃO PARA ABRIR/FECHAR CARRINHO (SOMA A BARRA) ---
 function toggleCart() { 
     const cartEl = document.getElementById("cart");
     const statusBar = document.getElementById("status-bar");
     
     cartEl.classList.toggle("open");
 
-    // Fecha a mensagem quando o carrinho abre
+    // Esconde a barra ao abrir o carrinho
     if (cartEl.classList.contains("open")) {
         if (statusBar) statusBar.style.display = "none";
     } else {
@@ -76,7 +78,7 @@ function toggleCart() {
     }
 }
 
-// --- FUNÇÕES DE RENDERIZAÇÃO E MODAL ---
+// --- RENDERIZAÇÃO E FUNCIONAMENTO ---
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
@@ -125,7 +127,6 @@ function openProductModal(id) {
 function updateModalPrice() {
     let total = selectedProduct.price;
     document.querySelectorAll('.extra-check:checked').forEach(c => total += parseFloat(c.getAttribute('data-price')));
-    
     let priceTag = document.querySelector(".modal-base-price");
     if (!priceTag) {
         priceTag = document.createElement("p");
@@ -155,6 +156,10 @@ function filterCategory(cat) {
 function removeFromCart(cartId) {
     cart = cart.filter(i => i.cartId !== cartId);
     updateCart();
+}
+
+function clearCart() {
+    if(confirm("Deseja limpar sua sacola?")) { cart = []; updateCart(); }
 }
 
 function updateCart() {
@@ -187,8 +192,8 @@ function toggleTrocoField() {
 }
 
 function finishOrder() {
-  if (!isStoreOpen()) return alert("❌ Estamos fechados!");
-  if (cart.length === 0) return alert("Sacola vazia!");
+  if (!isStoreOpen()) return alert("❌ Desculpe, estamos fechados agora!");
+  if (cart.length === 0) return alert("Sua sacola está vazia!");
   
   let texto = "*🍔 PEDIDO - LC BURGERS*\n\n";
   cart.forEach(i => {
