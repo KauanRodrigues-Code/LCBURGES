@@ -6,7 +6,6 @@ const productsData = [
   { id: 4, name: "EGG BURGER", desc: "Pão brioche, hambúrguer gourmet, tomate, alface, ovo, queijo mussarela.", price: 22.00, category: "tradicionais", img: "EGG-BURGER.png" },
   { id: 5, name: "CHESE BURGER", desc: "Pão brioche, hambúrguer gourmet, batata palha, queijo mussarela, requeijão, maionese caseira.", price: 20.00, category: "tradicionais", img: "CHESE-BURGER.png" },
   { id: 6, name: "BURGER", desc: "Pão brioche, hambúrguer gourmet, maionese da casa.", price: 15.00, category: "tradicionais", img: "BURGER.png" },
-
   // GOURMETS
   { id: 7, name: "COLOSSAL BURGER", desc: "Pão brioche, hambúrguer gourmet premium, frango empanado, alface, tomate, bacon, calabresa, ovo, queijo cheddar.", price: 40.00, category: "gourmets", img: "COLOSSAL-BURGER.png" },
   { id: 8, name: "CHICKEN BURGER", desc: "Pão brioche, frango empanado, maionese caseira, molho barbecue, batata palha, queijo cheddar.", price: 35.00, category: "gourmets", img: "CHICKEN-BURGER.png" },
@@ -14,7 +13,6 @@ const productsData = [
   { id: 10, name: "CALIENTE BURGER", desc: "Pão brioche, hambúrguer gourmet premium, queijo cheddar, maionese caseira, tomate, doritos.", price: 33.00, category: "gourmets", img: "CALIENTE-BURGER.png" },
   { id: 11, name: "ACEBOLADO BURGER", desc: "Pão brioche, hambúrguer gourmet premium, cebola caramelizada, maionese caseira, queijo cheddar.", price: 32.00, category: "gourmets", img: "ACEBOLADO-BURGER.png" },
   { id: 12, name: "BARBECUE BURGER", desc: "Pão brioche, 2 hambúrgueres de linguiça, queijo coalho, queijo cheddar, vinagrete, extra de barbecue.", price: 30.00, category: "gourmets", img: "BARBECUE-BURGER.png" },
-
   // BEBIDAS
   { id: 14, name: "Coca-Cola Lata", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA.png" },
   { id: 15, name: "Coca-Cola Lata Zero Açúcar", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA-ZERO.png" },
@@ -24,28 +22,17 @@ const productsData = [
 ];
 
 const extrasData = [
-    { name: "Frango Empanado", price: 12.00 },
-    { name: "Hambúrguer de Linguiça", price: 10.00 },
-    { name: "Hambúrguer Tradicional", price: 8.00 },
-    { name: "Hambúrguer Gourmet", price: 10.00 },
-    { name: "Cheddar", price: 4.00 },
-    { name: "Queijo Mussarela", price: 3.00 },
-    { name: "Queijo Coalho", price: 5.00 },
-    { name: "Queijo Coalho c/ Mel", price: 6.00 },
-    { name: "Calabresa", price: 6.00 },
-    { name: "Maionese C.", price: 2.00 },
-    { name: "Cebola", price: 2.00 },
-    { name: "Ovo", price: 4.00 },
-    { name: "Bacon", price: 6.00 },
-    { name: "Batata Palha", price: 3.00 },
-    { name: "Requeijão", price: 4.00 },
-    { name: "Barbecue", price: 4.00 },
-    { name: "Alface", price: 2.00 },
-    { name: "Tomate", price: 2.00 },
-    { name: "Vinagrete", price: 3.00 },
-    { name: "Doritos", price: 5.00 },
-    { name: "Geleia", price: 3.00 },
-    { name: "Cebola Caramelizada", price: 5.00 },
+    { name: "Frango Empanado", price: 12.00 }, { name: "Hambúrguer de Linguiça", price: 10.00 },
+    { name: "Hambúrguer Tradicional", price: 8.00 }, { name: "Hambúrguer Gourmet", price: 10.00 },
+    { name: "Cheddar", price: 4.00 }, { name: "Queijo Mussarela", price: 3.00 },
+    { name: "Queijo Coalho", price: 5.00 }, { name: "Queijo Coalho c/ Mel", price: 6.00 },
+    { name: "Calabresa", price: 6.00 }, { name: "Maionese C.", price: 2.00 },
+    { name: "Cebola", price: 2.00 }, { name: "Ovo", price: 4.00 },
+    { name: "Bacon", price: 6.00 }, { name: "Batata Palha", price: 3.00 },
+    { name: "Requeijão", price: 4.00 }, { name: "Barbecue", price: 4.00 },
+    { name: "Alface", price: 2.00 }, { name: "Tomate", price: 2.00 },
+    { name: "Vinagrete", price: 3.00 }, { name: "Doritos", price: 5.00 },
+    { name: "Geleia", price: 3.00 }, { name: "Cebola Caramelizada", price: 5.00 },
     { name: "Abacaxi", price: 5.00 }
 ];
 
@@ -58,23 +45,14 @@ function isStoreOpen() {
     const data = new Date();
     const hora = data.getHours();
     const dia = data.getDay(); // 0 = Domingo, 1 = Segunda...
-    
-    // Fechado na Segunda (1)
-    if (dia === 1) return false;
-    
-    // Aberto das 18:00 às 00:00 (Terça a Domingo)
-    return hora >= 18 && hora < 24;
+    if (dia === 1) return false; // Fechado na Segunda
+    return hora >= 18 && hora < 24; // Aberto das 18h às 00h
 }
 
 function updateStoreStatus() {
-    const oldBar = document.getElementById("status-bar");
-    if (oldBar) oldBar.remove();
+    const bar = document.getElementById("status-bar");
+    if (!bar) return;
 
-    // Criamos a barra sempre, mas controlamos o texto e cor
-    const bar = document.createElement("div");
-    bar.id = "status-bar";
-    bar.style = "color:white; text-align:center; padding:10px; font-weight:bold; position:sticky; top:0; z-index:1000; transition: 0.3s;";
-    
     if (!isStoreOpen()) {
         bar.style.backgroundColor = "#ff4b4b";
         bar.innerText = "🔴 FECHADO - Atendimento das 18:00 às 00:00";
@@ -82,34 +60,30 @@ function updateStoreStatus() {
         bar.style.backgroundColor = "#2ecc71";
         bar.innerText = "🟢 ABERTO - Faça seu pedido!";
     }
+}
+
+function toggleCart() { 
+    const cartEl = document.getElementById("cart");
+    const statusBar = document.getElementById("status-bar");
     
-    document.body.prepend(bar);
+    cartEl.classList.toggle("open");
+
+    // Fecha a mensagem quando o carrinho abre
+    if (cartEl.classList.contains("open")) {
+        if (statusBar) statusBar.style.display = "none";
+    } else {
+        if (statusBar) statusBar.style.display = "block";
+    }
 }
 
-function showToast(message, type = "success") {
-    const oldToast = document.querySelector(".toast-msg");
-    if (oldToast) oldToast.remove();
-    const toast = document.createElement("div");
-    toast.className = `toast-msg ${type === "success" ? "toast-success" : "toast-error"}`;
-    toast.innerText = message;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.remove(); }, 2000);
-}
-
+// --- FUNÇÕES DE RENDERIZAÇÃO E MODAL ---
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
   container.innerHTML = "";
   const filtered = productsData.filter(p => p.category === currentCategory);
-
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="coming-soon"><h2>🍔 Em breve...</h2><p>Estamos preparando novidades!</p></div>`;
-    return;
-  }
-
   filtered.forEach(p => {
     const textoBotao = p.category === "bebidas" ? "Selecionar bebida" : "Selecionar lanche";
-
     container.innerHTML += `
       <div class="product">
         <img src="${p.img}" onerror="this.src='Logo.png'">
@@ -126,15 +100,9 @@ function renderProducts() {
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
-    
     document.getElementById("modal-details").innerHTML = `
         <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
-        <div class="modal-header-text">
-            <h2>${selectedProduct.name}</h2>
-            <p>${selectedProduct.desc}</p>
-        </div>
-    `;
-
+        <div class="modal-header-text"><h2>${selectedProduct.name}</h2><p>${selectedProduct.desc}</p></div>`;
     const extrasDiv = document.getElementById("modal-extras");
     extrasDiv.innerHTML = "";
     if(selectedProduct.category !== 'bebidas') {
@@ -149,83 +117,56 @@ function openProductModal(id) {
                 </label>`;
         });
     }
-
-    const footer = document.querySelector(".modal-footer");
-    const priceDisplay = document.querySelector(".modal-base-price");
-    if (priceDisplay) priceDisplay.remove(); 
-    
-    const newPriceTag = document.createElement("p");
-    newPriceTag.className = "modal-base-price";
-    newPriceTag.style.textAlign = "center";
-    newPriceTag.style.marginBottom = "15px";
-    newPriceTag.innerHTML = `Total: R$ ${selectedProduct.price.toFixed(2)}`;
-    footer.insertBefore(newPriceTag, document.getElementById("add-to-cart-btn"));
-
+    updateModalPrice();
     document.getElementById("product-modal").style.display = "flex";
     document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
 }
 
 function updateModalPrice() {
     let total = selectedProduct.price;
-    const checks = document.querySelectorAll('.extra-check:checked');
-    checks.forEach(c => {
-        total += parseFloat(c.getAttribute('data-price'));
-    });
-    document.querySelector(".modal-base-price").innerHTML = `Total: R$ ${total.toFixed(2)}`;
+    document.querySelectorAll('.extra-check:checked').forEach(c => total += parseFloat(c.getAttribute('data-price')));
+    
+    let priceTag = document.querySelector(".modal-base-price");
+    if (!priceTag) {
+        priceTag = document.createElement("p");
+        priceTag.className = "modal-base-price";
+        document.querySelector(".modal-footer").insertBefore(priceTag, document.getElementById("add-to-cart-btn"));
+    }
+    priceTag.innerHTML = `Total: R$ ${total.toFixed(2)}`;
 }
 
 function closeModal() { document.getElementById("product-modal").style.display = "none"; }
 
 function addToCartFromModal() {
     const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
-        name: el.value,
-        price: parseFloat(el.getAttribute('data-price'))
+        name: el.value, price: parseFloat(el.getAttribute('data-price'))
     }));
-    const obs = document.getElementById("modal-obs").value;
     const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
-    cart.push({
-        ...selectedProduct,
-        cartId: Date.now(),
-        extras: selectedExtras,
-        obs: obs,
-        totalPrice: selectedProduct.price + extrasTotal,
-        qty: 1
-    });
-    updateCart();
-    closeModal();
-    showToast(`${selectedProduct.name} na sacola!`);
+    cart.push({ ...selectedProduct, cartId: Date.now(), extras: selectedExtras, obs: document.getElementById("modal-obs").value, totalPrice: selectedProduct.price + extrasTotal, qty: 1 });
+    updateCart(); closeModal();
 }
 
 function filterCategory(cat) {
   currentCategory = cat;
-  document.querySelectorAll(".category-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`));
-  });
+  document.querySelectorAll(".category-btn").forEach(btn => btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`)));
   renderProducts();
 }
 
 function removeFromCart(cartId) {
-    const index = cart.findIndex(i => i.cartId === cartId);
-    if (index > -1) {
-        cart.splice(index, 1);
-        updateCart();
-        showToast("Item removido", "error");
-    }
+    cart = cart.filter(i => i.cartId !== cartId);
+    updateCart();
 }
 
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
-  if (!itemsDiv) return;
   itemsDiv.innerHTML = "";
   let subtotal = 0;
   cart.forEach(item => {
     subtotal += item.totalPrice;
-    const extrasHtml = item.extras.length > 0 ? `<small>+ ${item.extras.map(e => e.name).join(', ')}</small>` : '';
-    const obsHtml = item.obs ? `<div class="cart-obs">📝 ${item.obs}</div>` : '';
     itemsDiv.innerHTML += `
       <div class="cart-item-card">
         <div class="cart-item-info">
-          <div><strong>${item.name}</strong>${extrasHtml}${obsHtml}</div>
+          <div><strong>${item.name}</strong><br><small>${item.extras.map(e => e.name).join(', ')}</small></div>
           <span class="cart-item-price">R$ ${item.totalPrice.toFixed(2)}</span>
         </div>
         <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">Remover</button>
@@ -233,23 +174,7 @@ function updateCart() {
   });
   const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
   document.getElementById("cart-count").innerText = cart.length;
-  document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
-}
-
-// --- FUNÇÃO TOGGLE MODIFICADA PARA FECHAR A BARRA ---
-function toggleCart() { 
-    const cartEl = document.getElementById("cart");
-    const statusBar = document.getElementById("status-bar");
-    
-    cartEl.classList.toggle("open");
-
-    // Se o carrinho estiver aberto (tem a classe open), esconde a barra
-    if (cartEl.classList.contains("open")) {
-        if (statusBar) statusBar.style.display = "none";
-    } else {
-        // Se fechar o carrinho, mostra a barra de volta
-        if (statusBar) statusBar.style.display = "block";
-    }
+  document.getElementById("cart-total").innerHTML = `<h3>Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
 }
 
 function toggleDeliveryFields() {
@@ -262,61 +187,20 @@ function toggleTrocoField() {
 }
 
 function finishOrder() {
-  if (!isStoreOpen()) {
-      alert("❌ Desculpe, estamos fechados! Nosso horário é das 18:00 às 00:00 (Terça a Domingo).");
-      return;
-  }
-
-  if (cart.length === 0) return alert("Sua sacola está vazia!");
+  if (!isStoreOpen()) return alert("❌ Estamos fechados!");
+  if (cart.length === 0) return alert("Sacola vazia!");
   
-  let textoFinal = "*🍔 PEDIDO - LC BURGERS*\n";
-  textoFinal += "------------------------------------------\n\n";
-
+  let texto = "*🍔 PEDIDO - LC BURGERS*\n\n";
   cart.forEach(i => {
-    textoFinal += `✅ *${i.qty}x ${i.name}*\n`;
-    if (i.extras.length > 0) {
-      textoFinal += `   + Adicionais: ${i.extras.map(e => e.name).join(', ')}\n`;
-    }
-    if (i.obs) {
-      textoFinal += `   📝 Obs: ${i.obs}\n`;
-    }
-    textoFinal += `   *Valor: R$ ${i.totalPrice.toFixed(2)}*\n\n`;
+    texto += `✅ *${i.name}*\n${i.extras.map(e => " + " + e.name).join('\n')}\nObs: ${i.obs}\nValor: R$ ${i.totalPrice.toFixed(2)}\n\n`;
   });
 
-  textoFinal += "------------------------------------------\n";
-  
   const deliveryType = document.getElementById("delivery-type").value;
   if (deliveryType === "entrega") {
-    textoFinal += "📍 *FORMA DE ENTREGA:* Entrega\n";
-    textoFinal += `🏠 *ENDEREÇO:* ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
-    textoFinal += `🏘️ *BAIRRO:* ${document.getElementById("cart-vila").value}\n`;
-    textoFinal += `🏢 *TIPO:* ${document.getElementById("home-type").value}\n`;
-    const ref = document.getElementById("cart-ponto-ref").value;
-    if(ref) textoFinal += `📍 *REF:* ${ref}\n`;
-  } else { 
-    textoFinal += "🏪 *FORMA DE ENTREGA:* Retirada no Balcão\n"; 
-  }
+    texto += `📍 *ENTREGA:* ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
+  } else { texto += `🏪 *RETIRADA NO BALCÃO*\n`; }
 
-  const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
-  const taxa = deliveryType === "entrega" ? 5 : 0;
-  const totalGeral = subtotal + taxa;
-  
-  const pagamento = document.getElementById("payment-method").value;
-  textoFinal += `\n💳 *PAGAMENTO:* ${pagamento}\n`;
-
-  if (pagamento === "Dinheiro") {
-    const valorPago = parseFloat(document.getElementById("cart-troco").value);
-    if (!isNaN(valorPago) && valorPago > totalGeral) {
-        textoFinal += `💵 *TROCO PARA:* R$ ${valorPago.toFixed(2)}\n`;
-        textoFinal += `💰 *VALOR DO TROCO:* R$ ${(valorPago - totalGeral).toFixed(2)}\n`;
-    } else {
-        textoFinal += `💵 *PAGO EM DINHEIRO* (Sem troco)\n`;
-    }
-  }
-
-  textoFinal += `\n*TOTAL DO PEDIDO: R$ ${totalGeral.toFixed(2)}*`;
-
-  window.open(`https://wa.me/5543999225202?text=${encodeURIComponent(textoFinal)}`);
+  window.open(`https://wa.me/5543999225202?text=${encodeURIComponent(texto)}`);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
