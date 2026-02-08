@@ -53,47 +53,28 @@ let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
-/* ================= BOTÃO POR CATEGORIA ================= */
+/* TEXTO DO BOTÃO (SIMPLES E SEGURO) */
 function getButtonText(category) {
-  switch (category) {
-    case "bebidas":
-      return "Selecionar bebida";
-    case "combos":
-      return "Selecionar combo";
-    default:
-      return "Selecionar lanche";
-  }
+  if (category === "bebidas") return "Selecionar bebida";
+  return "Selecionar lanche";
 }
 
-/* ================= TOAST ================= */
 function showToast(message, type = "success") {
   const oldToast = document.querySelector(".toast-msg");
   if (oldToast) oldToast.remove();
-
   const toast = document.createElement("div");
   toast.className = `toast-msg ${type === "success" ? "toast-success" : "toast-error"}`;
   toast.innerText = message;
   document.body.appendChild(toast);
-
   setTimeout(() => toast.remove(), 2000);
 }
 
-/* ================= RENDER PRODUTOS ================= */
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
-
   container.innerHTML = "";
-  const filtered = productsData.filter(p => p.category === currentCategory);
 
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="coming-soon">
-        <h2>🍔 Em breve...</h2>
-        <p>Estamos preparando combos incríveis para você!</p>
-      </div>`;
-    return;
-  }
+  const filtered = productsData.filter(p => p.category === currentCategory);
 
   filtered.forEach(p => {
     container.innerHTML += `
@@ -111,83 +92,4 @@ function renderProducts() {
   });
 }
 
-/* ================= MODAL ================= */
-function openProductModal(id) {
-  selectedProduct = productsData.find(p => p.id === id);
-  document.getElementById("modal-obs").value = "";
-
-  document.getElementById("modal-details").innerHTML = `
-    <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
-    <div class="modal-header-text">
-      <h2>${selectedProduct.name}</h2>
-      <p>${selectedProduct.desc}</p>
-    </div>
-  `;
-
-  const extrasDiv = document.getElementById("modal-extras");
-  extrasDiv.innerHTML = "";
-
-  if (selectedProduct.category !== "bebidas") {
-    extrasData.forEach(extra => {
-      extrasDiv.innerHTML += `
-        <label class="extra-item">
-          <div>
-            <input type="checkbox" class="extra-check" value="${extra.name}" data-price="${extra.price}" onchange="updateModalPrice()">
-            <span>${extra.name}</span>
-          </div>
-          <span>+ R$ ${extra.price.toFixed(2)}</span>
-        </label>`;
-    });
-  }
-
-  const footer = document.querySelector(".modal-footer");
-  const oldPrice = document.querySelector(".modal-base-price");
-  if (oldPrice) oldPrice.remove();
-
-  const priceTag = document.createElement("p");
-  priceTag.className = "modal-base-price";
-  priceTag.innerHTML = `Total: R$ ${selectedProduct.price.toFixed(2)}`;
-  footer.insertBefore(priceTag, document.getElementById("add-to-cart-btn"));
-
-  document.getElementById("product-modal").style.display = "flex";
-  document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
-}
-
-/* ================= MODAL PRICE ================= */
-function updateModalPrice() {
-  let total = selectedProduct.price;
-  document.querySelectorAll(".extra-check:checked").forEach(e => {
-    total += parseFloat(e.dataset.price);
-  });
-  document.querySelector(".modal-base-price").innerHTML = `Total: R$ ${total.toFixed(2)}`;
-}
-
-/* ================= CART ================= */
-function addToCartFromModal() {
-  const extras = Array.from(document.querySelectorAll(".extra-check:checked")).map(e => ({
-    name: e.value,
-    price: parseFloat(e.dataset.price)
-  }));
-
-  const obs = document.getElementById("modal-obs").value;
-  const extrasTotal = extras.reduce((s, e) => s + e.price, 0);
-
-  cart.push({
-    ...selectedProduct,
-    cartId: Date.now(),
-    extras,
-    obs,
-    totalPrice: selectedProduct.price + extrasTotal
-  });
-
-  updateCart();
-  closeModal();
-  showToast(`${selectedProduct.name} na sacola!`);
-}
-
-function closeModal() {
-  document.getElementById("product-modal").style.display = "none";
-}
-
-/* ================= INIT ================= */
 document.addEventListener("DOMContentLoaded", renderProducts);
