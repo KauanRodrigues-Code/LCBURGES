@@ -55,8 +55,14 @@ let selectedProduct = null;
 
 // --- FUNÇÃO DE HORÁRIO ---
 function isStoreOpen() {
-    const hora = new Date().getHours();
-    // Aberto das 18:00 às 23:59
+    const data = new Date();
+    const hora = data.getHours();
+    const dia = data.getDay(); // 0 = Domingo, 1 = Segunda...
+    
+    // Fechado na Segunda (1)
+    if (dia === 1) return false;
+    
+    // Aberto das 18:00 às 00:00 (Terça a Domingo)
     return hora >= 18 && hora < 24;
 }
 
@@ -64,13 +70,20 @@ function updateStoreStatus() {
     const oldBar = document.getElementById("status-bar");
     if (oldBar) oldBar.remove();
 
+    // Criamos a barra sempre, mas controlamos o texto e cor
+    const bar = document.createElement("div");
+    bar.id = "status-bar";
+    bar.style = "color:white; text-align:center; padding:10px; font-weight:bold; position:sticky; top:0; z-index:1000; transition: 0.3s;";
+    
     if (!isStoreOpen()) {
-        const bar = document.createElement("div");
-        bar.id = "status-bar";
-        bar.style = "background:#ff4b4b; color:white; text-align:center; padding:10px; font-weight:bold; position:sticky; top:0; z-index:1000;";
+        bar.style.backgroundColor = "#ff4b4b";
         bar.innerText = "🔴 FECHADO - Atendimento das 18:00 às 00:00";
-        document.body.prepend(bar);
+    } else {
+        bar.style.backgroundColor = "#2ecc71";
+        bar.innerText = "🟢 ABERTO - Faça seu pedido!";
     }
+    
+    document.body.prepend(bar);
 }
 
 function showToast(message, type = "success") {
@@ -95,7 +108,6 @@ function renderProducts() {
   }
 
   filtered.forEach(p => {
-    // Troca dinâmica do nome do botão
     const textoBotao = p.category === "bebidas" ? "Selecionar bebida" : "Selecionar lanche";
 
     container.innerHTML += `
@@ -201,15 +213,6 @@ function removeFromCart(cartId) {
     }
 }
 
-function clearCart() {
-    if(cart.length === 0) return;
-    if(confirm("Deseja limpar toda a sacola?")) {
-        cart = [];
-        updateCart();
-        showToast("Você limpou sua Sacola", "error");
-    }
-}
-
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
   if (!itemsDiv) return;
@@ -233,7 +236,21 @@ function updateCart() {
   document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
 }
 
-function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
+// --- FUNÇÃO TOGGLE MODIFICADA PARA FECHAR A BARRA ---
+function toggleCart() { 
+    const cartEl = document.getElementById("cart");
+    const statusBar = document.getElementById("status-bar");
+    
+    cartEl.classList.toggle("open");
+
+    // Se o carrinho estiver aberto (tem a classe open), esconde a barra
+    if (cartEl.classList.contains("open")) {
+        if (statusBar) statusBar.style.display = "none";
+    } else {
+        // Se fechar o carrinho, mostra a barra de volta
+        if (statusBar) statusBar.style.display = "block";
+    }
+}
 
 function toggleDeliveryFields() {
     document.getElementById("address-fields").style.display = document.getElementById("delivery-type").value === "entrega" ? "block" : "none";
@@ -245,9 +262,8 @@ function toggleTrocoField() {
 }
 
 function finishOrder() {
-  // Trava de Horário
   if (!isStoreOpen()) {
-      alert("❌ Desculpe, estamos fechados! Nosso horário é das 18:00 às 00:00.");
+      alert("❌ Desculpe, estamos fechados! Nosso horário é das 18:00 às 00:00 (Terça a Domingo).");
       return;
   }
 
@@ -303,7 +319,6 @@ function finishOrder() {
   window.open(`https://wa.me/5543999225202?text=${encodeURIComponent(textoFinal)}`);
 }
 
-// Inicializa o site
 document.addEventListener("DOMContentLoaded", () => {
     updateStoreStatus();
     renderProducts();
