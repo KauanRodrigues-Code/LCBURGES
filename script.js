@@ -6,6 +6,7 @@ const productsData = [
   { id: 4, name: "EGG BURGER", desc: "Pão brioche, hambúrguer gourmet, tomate, alface, ovo, queijo mussarela.", price: 22.00, category: "tradicionais", img: "EGG-BURGER.png" },
   { id: 5, name: "CHESE BURGER", desc: "Pão brioche, hambúrguer gourmet, batata palha, queijo mussarela, requeijão, maionese caseira.", price: 20.00, category: "tradicionais", img: "CHESE-BURGER.png" },
   { id: 6, name: "BURGER", desc: "Pão brioche, hambúrguer gourmet, maionese da casa.", price: 15.00, category: "tradicionais", img: "BURGER.png" },
+
   // GOURMETS
   { id: 7, name: "COLOSSAL BURGER", desc: "Pão brioche, hambúrguer gourmet premium, frango empanado, alface, tomate, bacon, calabresa, ovo, queijo cheddar.", price: 40.00, category: "gourmets", img: "COLOSSAL-BURGER.png" },
   { id: 8, name: "CHICKEN BURGER", desc: "Pão brioche, frango empanado, maionese caseira, molho barbecue, batata palha, queijo cheddar.", price: 35.00, category: "gourmets", img: "CHICKEN-BURGER.png" },
@@ -13,6 +14,7 @@ const productsData = [
   { id: 10, name: "CALIENTE BURGER", desc: "Pão brioche, hambúrguer gourmet premium, queijo cheddar, maionese caseira, tomate, doritos.", price: 33.00, category: "gourmets", img: "CALIENTE-BURGER.png" },
   { id: 11, name: "ACEBOLADO BURGER", desc: "Pão brioche, hambúrguer gourmet premium, cebola caramelizada, maionese caseira, queijo cheddar.", price: 32.00, category: "gourmets", img: "ACEBOLADO-BURGER.png" },
   { id: 12, name: "BARBECUE BURGER", desc: "Pão brioche, 2 hambúrgueres de linguiça, queijo coalho, queijo cheddar, vinagrete, extra de barbecue.", price: 30.00, category: "gourmets", img: "BARBECUE-BURGER.png" },
+
   // BEBIDAS
   { id: 14, name: "Coca-Cola Lata", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA.png" },
   { id: 15, name: "Coca-Cola Lata Zero Açúcar", desc: "350ml gelada", price: 6.00, category: "bebidas", img: "COCA-LATA-ZERO.png" },
@@ -40,20 +42,18 @@ let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
-// --- LÓGICA DE HORÁRIO ---
+// --- SISTEMA DE HORÁRIO ---
 function isStoreOpen() {
     const data = new Date();
     const hora = data.getHours();
-    const dia = data.getDay(); // 0 = Dom, 1 = Seg, 2 = Ter...
-
-    if (dia === 1) return false; // TOTALMENTE FECHADO NA SEGUNDA
-    return hora >= 18 && hora < 24; // ABERTO DAS 18h às 00h
+    const dia = data.getDay(); // 0=Dom, 1=Seg, 2=Ter...
+    if (dia === 1) return false; // SEGUNDA FECHADO
+    return hora >= 18 && hora < 24; // TER A DOM (18H ÀS 00H)
 }
 
 function updateStoreStatus() {
     const bar = document.getElementById("status-bar");
     if (!bar) return;
-
     if (!isStoreOpen()) {
         bar.style.backgroundColor = "#ff4b4b";
         bar.innerText = "🔴 FECHADO - Atendimento das 18:00 às 00:00 (Terça a Domingo)";
@@ -63,14 +63,11 @@ function updateStoreStatus() {
     }
 }
 
-// --- FUNÇÃO PARA ABRIR/FECHAR CARRINHO (SOMA A BARRA) ---
+// --- CARRINHO ---
 function toggleCart() { 
     const cartEl = document.getElementById("cart");
     const statusBar = document.getElementById("status-bar");
-    
     cartEl.classList.toggle("open");
-
-    // Esconde a barra ao abrir o carrinho
     if (cartEl.classList.contains("open")) {
         if (statusBar) statusBar.style.display = "none";
     } else {
@@ -78,12 +75,23 @@ function toggleCart() {
     }
 }
 
-// --- RENDERIZAÇÃO E FUNCIONAMENTO ---
+// --- PRODUTOS E COMBOS ---
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
   container.innerHTML = "";
   const filtered = productsData.filter(p => p.category === currentCategory);
+
+  if (currentCategory === 'combos' && filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: #fff; border-radius: 10px; margin-top: 20px; border: 2px dashed #ff4b4b;">
+        <h2 style="font-size: 30px;">🍔 Em breve...</h2>
+        <p style="color: #666; font-size: 18px;">Estamos preparando os melhores combos para você!</p>
+        <p style="font-size: 25px; margin-top: 10px;">⏳</p>
+      </div>`;
+    return;
+  }
+
   filtered.forEach(p => {
     const textoBotao = p.category === "bebidas" ? "Selecionar bebida" : "Selecionar lanche";
     container.innerHTML += `
@@ -99,6 +107,7 @@ function renderProducts() {
   });
 }
 
+// --- DEMAIS FUNÇÕES ---
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
@@ -127,12 +136,9 @@ function openProductModal(id) {
 function updateModalPrice() {
     let total = selectedProduct.price;
     document.querySelectorAll('.extra-check:checked').forEach(c => total += parseFloat(c.getAttribute('data-price')));
-    let priceTag = document.querySelector(".modal-base-price");
-    if (!priceTag) {
-        priceTag = document.createElement("p");
-        priceTag.className = "modal-base-price";
-        document.querySelector(".modal-footer").insertBefore(priceTag, document.getElementById("add-to-cart-btn"));
-    }
+    let priceTag = document.querySelector(".modal-base-price") || document.createElement("p");
+    priceTag.className = "modal-base-price";
+    document.querySelector(".modal-footer").insertBefore(priceTag, document.getElementById("add-to-cart-btn"));
     priceTag.innerHTML = `Total: R$ ${total.toFixed(2)}`;
 }
 
@@ -142,8 +148,7 @@ function addToCartFromModal() {
     const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
         name: el.value, price: parseFloat(el.getAttribute('data-price'))
     }));
-    const extrasTotal = selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
-    cart.push({ ...selectedProduct, cartId: Date.now(), extras: selectedExtras, obs: document.getElementById("modal-obs").value, totalPrice: selectedProduct.price + extrasTotal, qty: 1 });
+    cart.push({ ...selectedProduct, cartId: Date.now(), extras: selectedExtras, obs: document.getElementById("modal-obs").value, totalPrice: selectedProduct.price + selectedExtras.reduce((a,b)=>a+b.price,0), qty: 1 });
     updateCart(); closeModal();
 }
 
@@ -153,14 +158,9 @@ function filterCategory(cat) {
   renderProducts();
 }
 
-function removeFromCart(cartId) {
-    cart = cart.filter(i => i.cartId !== cartId);
-    updateCart();
-}
+function removeFromCart(cartId) { cart = cart.filter(i => i.cartId !== cartId); updateCart(); }
 
-function clearCart() {
-    if(confirm("Deseja limpar sua sacola?")) { cart = []; updateCart(); }
-}
+function clearCart() { if(confirm("Limpar sacola?")) { cart = []; updateCart(); } }
 
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
@@ -168,14 +168,7 @@ function updateCart() {
   let subtotal = 0;
   cart.forEach(item => {
     subtotal += item.totalPrice;
-    itemsDiv.innerHTML += `
-      <div class="cart-item-card">
-        <div class="cart-item-info">
-          <div><strong>${item.name}</strong><br><small>${item.extras.map(e => e.name).join(', ')}</small></div>
-          <span class="cart-item-price">R$ ${item.totalPrice.toFixed(2)}</span>
-        </div>
-        <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">Remover</button>
-      </div>`;
+    itemsDiv.innerHTML += `<div class="cart-item-card"><strong>${item.name}</strong> - R$ ${item.totalPrice.toFixed(2)} <button onclick="removeFromCart(${item.cartId})">Remover</button></div>`;
   });
   const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
   document.getElementById("cart-count").innerText = cart.length;
@@ -192,23 +185,11 @@ function toggleTrocoField() {
 }
 
 function finishOrder() {
-  if (!isStoreOpen()) return alert("❌ Desculpe, estamos fechados agora!");
-  if (cart.length === 0) return alert("Sua sacola está vazia!");
-  
+  if (!isStoreOpen()) return alert("❌ Estamos fechados!");
+  if (cart.length === 0) return alert("Sacola vazia!");
   let texto = "*🍔 PEDIDO - LC BURGERS*\n\n";
-  cart.forEach(i => {
-    texto += `✅ *${i.name}*\n${i.extras.map(e => " + " + e.name).join('\n')}\nObs: ${i.obs}\nValor: R$ ${i.totalPrice.toFixed(2)}\n\n`;
-  });
-
-  const deliveryType = document.getElementById("delivery-type").value;
-  if (deliveryType === "entrega") {
-    texto += `📍 *ENTREGA:* ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
-  } else { texto += `🏪 *RETIRADA NO BALCÃO*\n`; }
-
+  cart.forEach(i => { texto += `✅ *${i.name}* (R$ ${i.totalPrice.toFixed(2)})\n`; });
   window.open(`https://wa.me/5543999225202?text=${encodeURIComponent(texto)}`);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    updateStoreStatus();
-    renderProducts();
-});
+document.addEventListener("DOMContentLoaded", () => { updateStoreStatus(); renderProducts(); });
