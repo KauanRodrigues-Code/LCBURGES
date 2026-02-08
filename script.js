@@ -46,9 +46,9 @@ let selectedProduct = null;
 function isStoreOpen() {
     const data = new Date();
     const hora = data.getHours();
-    const dia = data.getDay(); // 0=Dom, 1=Seg, 2=Ter...
-    if (dia === 1) return false; // SEGUNDA FECHADO
-    return hora >= 18 && hora < 24; // TER A DOM (18H ÀS 00H)
+    const dia = data.getDay(); 
+    if (dia === 1) return false; 
+    return (hora >= 18 && hora < 24) || (hora >= 0 && hora < 1); // Aberto até 1h da manhã para garantir
 }
 
 function updateStoreStatus() {
@@ -69,13 +69,13 @@ function toggleCart() {
     const statusBar = document.getElementById("status-bar");
     cartEl.classList.toggle("open");
     if (cartEl.classList.contains("open")) {
-        if (statusBar) statusBar.style.display = "none";
+        if (statusBar) statusBar.style.visibility = "hidden";
     } else {
-        if (statusBar) statusBar.style.display = "block";
+        if (statusBar) statusBar.style.visibility = "visible";
     }
 }
 
-// --- PRODUTOS E COMBOS ---
+// --- PRODUTOS ---
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
@@ -87,7 +87,6 @@ function renderProducts() {
       <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: #fff; border-radius: 10px; margin-top: 20px; border: 2px dashed #ff4b4b;">
         <h2 style="font-size: 30px;">🍔 Em breve...</h2>
         <p style="color: #666; font-size: 18px;">Estamos preparando os melhores combos para você!</p>
-        <p style="font-size: 25px; margin-top: 10px;">⏳</p>
       </div>`;
     return;
   }
@@ -107,15 +106,17 @@ function renderProducts() {
   });
 }
 
-// --- DEMAIS FUNÇÕES ---
+// --- MODAL ---
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
     document.getElementById("modal-details").innerHTML = `
         <img src="${selectedProduct.img}" onerror="this.src='Logo.png'" class="modal-img-top">
         <div class="modal-header-text"><h2>${selectedProduct.name}</h2><p>${selectedProduct.desc}</p></div>`;
+    
     const extrasDiv = document.getElementById("modal-extras");
     extrasDiv.innerHTML = "";
+    
     if(selectedProduct.category !== 'bebidas') {
         extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
@@ -130,7 +131,6 @@ function openProductModal(id) {
     }
     updateModalPrice();
     document.getElementById("product-modal").style.display = "flex";
-    document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
 }
 
 function updateModalPrice() {
@@ -148,31 +148,64 @@ function addToCartFromModal() {
     const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
         name: el.value, price: parseFloat(el.getAttribute('data-price'))
     }));
-    cart.push({ ...selectedProduct, cartId: Date.now(), extras: selectedExtras, obs: document.getElementById("modal-obs").value, totalPrice: selectedProduct.price + selectedExtras.reduce((a,b)=>a+b.price,0), qty: 1 });
-    updateCart(); closeModal();
+    
+    const itemTotal = selectedProduct.price + selectedExtras.reduce((a,b)=>a+b.price, 0);
+    
+    cart.push({ 
+        ...selectedProduct, 
+        cartId: Date.now(), 
+        extras: selectedExtras, 
+        obs: document.getElementById("modal-obs").value, 
+        totalPrice: itemTotal, 
+        qty: 1 
+    });
+    
+    updateCart(); 
+    closeModal();
 }
 
-function filterCategory(cat) {
-  currentCategory = cat;
-  document.querySelectorAll(".category-btn").forEach(btn => btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`)));
-  renderProducts();
-}
-
-function removeFromCart(cartId) { cart = cart.filter(i => i.cartId !== cartId); updateCart(); }
-
-function clearCart() { if(confirm("Limpar sacola?")) { cart = []; updateCart(); } }
-
+// --- ATUALIZAÇÃO DO CARRINHO ---
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
   itemsDiv.innerHTML = "";
   let subtotal = 0;
+
   cart.forEach(item => {
     subtotal += item.totalPrice;
-    itemsDiv.innerHTML += `<div class="cart-item-card"><strong>${item.name}</strong> - R$ ${item.totalPrice.toFixed(2)} <button onclick="removeFromCart(${item.cartId})">Remover</button></div>`;
+    
+    // Lista os extras para mostrar no carrinho
+    let extrasNomes = item.extras.length > 0 ? `<br><small>+ ${item.extras.map(e => e.name).join(', ')}</small>` : "";
+    
+    itemsDiv.innerHTML += `
+      <div class="cart-item-card">
+        <div>
+            <strong>${item.name}</strong> ${extrasNomes}
+            <div style="font-size: 14px; color: #666;">R$ ${item.totalPrice.toFixed(2)}</div>
+        </div>
+        <button onclick="removeFromCart(${item.cartId})" style="background:#ff4b4b; color:white; border:none; padding:5px; border-radius:5px; cursor:pointer;">Remover</button>
+      </div>`;
   });
-  const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
+
+  const deliveryType = document.getElementById("delivery-type").value;
+  const taxaEntrega = deliveryType === "entrega" ? 5 : 0;
+  
   document.getElementById("cart-count").innerText = cart.length;
-  document.getElementById("cart-total").innerHTML = `<h3>Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
+  document.getElementById("cart-total").innerHTML = `<h3>Total: R$ ${(subtotal + taxaEntrega).toFixed(2)}</h3>`;
+}
+
+function removeFromCart(cartId) { 
+    cart = cart.filter(i => i.cartId !== cartId); 
+    updateCart(); 
+}
+
+function clearCart() { 
+    if(confirm("Limpar sacola?")) { cart = []; updateCart(); } 
+}
+
+function filterCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll(".category-btn").forEach(btn => btn.classList.toggle("active", btn.innerText.toLowerCase().includes(cat.slice(0,3))));
+  renderProducts();
 }
 
 function toggleDeliveryFields() {
@@ -184,12 +217,84 @@ function toggleTrocoField() {
     document.getElementById("troco-field").style.display = document.getElementById("payment-method").value === "Dinheiro" ? "block" : "none";
 }
 
+// --- FUNÇÃO FINAL DE ENVIO WHATSAPP ---
 function finishOrder() {
-  if (!isStoreOpen()) return alert("❌ Estamos fechados!");
-  if (cart.length === 0) return alert("Sacola vazia!");
-  let texto = "*🍔 PEDIDO - LC BURGERS*\n\n";
-  cart.forEach(i => { texto += `✅ *${i.name}* (R$ ${i.totalPrice.toFixed(2)})\n`; });
-  window.open(`https://wa.me/5543999225202?text=${encodeURIComponent(texto)}`);
+  if (!isStoreOpen()) {
+      alert("❌ Desculpe, estamos fechados no momento!");
+      return;
+  }
+  
+  if (cart.length === 0) {
+      alert("Sua sacola está vazia!");
+      return;
+  }
+
+  let textoFinal = "*🍔 NOVO PEDIDO - LC BURGERS*\n";
+  textoFinal += "------------------------------------------\n\n";
+
+  cart.forEach(item => {
+    textoFinal += `✅ *${item.qty}x ${item.name}*\n`;
+    
+    if (item.extras && item.extras.length > 0) {
+      textoFinal += `   ➕ *Extras:* ${item.extras.map(e => e.name).join(', ')}\n`;
+    }
+    
+    if (item.obs && item.obs.trim() !== "") {
+      textoFinal += `   📝 *Obs:* ${item.obs}\n`;
+    }
+    
+    textoFinal += `   💰 R$ ${item.totalPrice.toFixed(2)}\n\n`;
+  });
+
+  textoFinal += "------------------------------------------\n";
+  
+  const deliveryType = document.getElementById("delivery-type").value;
+  
+  if (deliveryType === "entrega") {
+    const rua = document.getElementById("cart-rua").value;
+    const num = document.getElementById("cart-numero").value;
+    const bairro = document.getElementById("cart-vila").value; // Bairro
+    const tipo = document.getElementById("home-type").value;
+    const ref = document.getElementById("cart-ponto-ref").value;
+
+    if (!rua || !num || !bairro) {
+        alert("Por favor, preencha o endereço completo!");
+        return;
+    }
+
+    textoFinal += "📍 *ENTREGA*\n";
+    textoFinal += `🏠 *Endereço:* ${rua}, ${num}\n`;
+    textoFinal += `🏘️ *Bairro:* ${bairro}\n`;
+    textoFinal += `🏢 *Tipo:* ${tipo}\n`;
+    if(ref) textoFinal += `📍 *Ref:* ${ref}\n`;
+  } else {
+    textoFinal += "🏪 *RETIRADA NO BALCÃO*\n";
+  }
+
+  const subtotalGeral = cart.reduce((acc, obj) => acc + obj.totalPrice, 0);
+  const taxaEntrega = deliveryType === "entrega" ? 5 : 0;
+  const totalGeral = subtotalGeral + taxaEntrega;
+  
+  const pagamento = document.getElementById("payment-method").value;
+  textoFinal += `\n💳 *PAGAMENTO:* ${pagamento}\n`;
+
+  if (pagamento === "Dinheiro") {
+    const valorTrocoPara = parseFloat(document.getElementById("cart-troco").value);
+    if (!isNaN(valorTrocoPara) && valorTrocoPara > totalGeral) {
+        textoFinal += `💵 *Troco para:* R$ ${valorTrocoPara.toFixed(2)}\n`;
+        textoFinal += `🪙 *Levar:* R$ ${(valorTrocoPara - totalGeral).toFixed(2)}\n`;
+    }
+  }
+
+  textoFinal += `\n*TOTAL: R$ ${totalGeral.toFixed(2)}*`;
+
+  const fone = "5543999225202";
+  window.open(`https://wa.me/${fone}?text=${encodeURIComponent(textoFinal)}`);
 }
 
-document.addEventListener("DOMContentLoaded", () => { updateStoreStatus(); renderProducts(); });
+// --- INICIALIZAÇÃO ---
+document.addEventListener("DOMContentLoaded", () => { 
+    updateStoreStatus(); 
+    renderProducts(); 
+    document.getElementById("add-to-cart-btn").onclick = addToCartFromModal;
+});
