@@ -53,6 +53,26 @@ let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
+// --- FUNÇÃO DE HORÁRIO ---
+function isStoreOpen() {
+    const hora = new Date().getHours();
+    // Aberto das 18:00 às 23:59
+    return hora >= 18 && hora < 24;
+}
+
+function updateStoreStatus() {
+    const oldBar = document.getElementById("status-bar");
+    if (oldBar) oldBar.remove();
+
+    if (!isStoreOpen()) {
+        const bar = document.createElement("div");
+        bar.id = "status-bar";
+        bar.style = "background:#ff4b4b; color:white; text-align:center; padding:10px; font-weight:bold; position:sticky; top:0; z-index:1000;";
+        bar.innerText = "🔴 FECHADO - Atendimento das 18:00 às 00:00";
+        document.body.prepend(bar);
+    }
+}
+
 function showToast(message, type = "success") {
     const oldToast = document.querySelector(".toast-msg");
     if (oldToast) oldToast.remove();
@@ -70,12 +90,12 @@ function renderProducts() {
   const filtered = productsData.filter(p => p.category === currentCategory);
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="coming-soon"><h2>🍔 Em breve...</h2><p>Estamos preparando combos incríveis!</p></div>`;
+    container.innerHTML = `<div class="coming-soon"><h2>🍔 Em breve...</h2><p>Estamos preparando novidades!</p></div>`;
     return;
   }
 
   filtered.forEach(p => {
-    // Muda o nome do botão conforme a categoria
+    // Troca dinâmica do nome do botão
     const textoBotao = p.category === "bebidas" ? "Selecionar bebida" : "Selecionar lanche";
 
     container.innerHTML += `
@@ -225,6 +245,12 @@ function toggleTrocoField() {
 }
 
 function finishOrder() {
+  // Trava de Horário
+  if (!isStoreOpen()) {
+      alert("❌ Desculpe, estamos fechados! Nosso horário é das 18:00 às 00:00.");
+      return;
+  }
+
   if (cart.length === 0) return alert("Sua sacola está vazia!");
   
   let textoFinal = "*🍔 PEDIDO - LC BURGERS*\n";
@@ -249,6 +275,8 @@ function finishOrder() {
     textoFinal += `🏠 *ENDEREÇO:* ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
     textoFinal += `🏘️ *BAIRRO:* ${document.getElementById("cart-vila").value}\n`;
     textoFinal += `🏢 *TIPO:* ${document.getElementById("home-type").value}\n`;
+    const ref = document.getElementById("cart-ponto-ref").value;
+    if(ref) textoFinal += `📍 *REF:* ${ref}\n`;
   } else { 
     textoFinal += "🏪 *FORMA DE ENTREGA:* Retirada no Balcão\n"; 
   }
@@ -258,16 +286,15 @@ function finishOrder() {
   const totalGeral = subtotal + taxa;
   
   const pagamento = document.getElementById("payment-method").value;
-  textoFinal += `\n💳 *FORMA DE PAGAMENTO:* ${pagamento}\n`;
+  textoFinal += `\n💳 *PAGAMENTO:* ${pagamento}\n`;
 
-  // Lógica do Troco
   if (pagamento === "Dinheiro") {
     const valorPago = parseFloat(document.getElementById("cart-troco").value);
     if (!isNaN(valorPago) && valorPago > totalGeral) {
         textoFinal += `💵 *TROCO PARA:* R$ ${valorPago.toFixed(2)}\n`;
         textoFinal += `💰 *VALOR DO TROCO:* R$ ${(valorPago - totalGeral).toFixed(2)}\n`;
-    } else if (valorPago === totalGeral) {
-        textoFinal += `💵 *PAGO EM DINHEIRO:* (Sem troco)\n`;
+    } else {
+        textoFinal += `💵 *PAGO EM DINHEIRO* (Sem troco)\n`;
     }
   }
 
@@ -276,4 +303,8 @@ function finishOrder() {
   window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
 }
 
-document.addEventListener("DOMContentLoaded", renderProducts);
+// Inicializa o site
+document.addEventListener("DOMContentLoaded", () => {
+    updateStoreStatus();
+    renderProducts();
+});
