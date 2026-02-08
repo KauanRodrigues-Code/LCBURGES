@@ -70,16 +70,12 @@ function renderProducts() {
   const filtered = productsData.filter(p => p.category === currentCategory);
 
   if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="coming-soon">
-        <h2>🍔 Em breve...</h2>
-        <p>Estamos preparando combos incríveis para você!</p>
-      </div>`;
+    container.innerHTML = `<div class="coming-soon"><h2>🍔 Em breve...</h2><p>Estamos preparando combos incríveis!</p></div>`;
     return;
   }
 
   filtered.forEach(p => {
-    // AJUSTE AQUI: Verifica a categoria para mudar o texto do botão
+    // Muda o nome do botão conforme a categoria
     const textoBotao = p.category === "bebidas" ? "Selecionar bebida" : "Selecionar lanche";
 
     container.innerHTML += `
@@ -109,7 +105,6 @@ function openProductModal(id) {
 
     const extrasDiv = document.getElementById("modal-extras");
     extrasDiv.innerHTML = "";
-    // Se for bebida, não mostra a lista de adicionais/extras
     if(selectedProduct.category !== 'bebidas') {
         extrasData.forEach(extra => {
             extrasDiv.innerHTML += `
@@ -172,9 +167,7 @@ function addToCartFromModal() {
 function filterCategory(cat) {
   currentCategory = cat;
   document.querySelectorAll(".category-btn").forEach(btn => {
-    // Ajuste para garantir que a classe active funcione corretamente comparando o valor da categoria
-    const onClickAttr = btn.getAttribute("onclick");
-    btn.classList.toggle("active", onClickAttr && onClickAttr.includes(`'${cat}'`));
+    btn.classList.toggle("active", btn.getAttribute("onclick").includes(`'${cat}'`));
   });
   renderProducts();
 }
@@ -215,71 +208,70 @@ function updateCart() {
         <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">Remover</button>
       </div>`;
   });
-  const deliveryTypeEl = document.getElementById("delivery-type");
-  const delivery = (deliveryTypeEl && deliveryTypeEl.value === "entrega") ? 5 : 0;
-  
-  const cartCountEl = document.getElementById("cart-count");
-  if(cartCountEl) cartCountEl.innerText = cart.length;
-
-  const cartTotalEl = document.getElementById("cart-total");
-  if(cartTotalEl) {
-    cartTotalEl.innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
-  }
+  const delivery = document.getElementById("delivery-type").value === "entrega" ? 5 : 0;
+  document.getElementById("cart-count").innerText = cart.length;
+  document.getElementById("cart-total").innerHTML = `<h3 style="text-align:center; margin-bottom:15px;">Total: R$ ${(subtotal + delivery).toFixed(2)}</h3>`;
 }
 
 function toggleCart() { document.getElementById("cart").classList.toggle("open"); }
 
 function toggleDeliveryFields() {
-    const deliveryType = document.getElementById("delivery-type").value;
-    const addressFields = document.getElementById("address-fields");
-    if(addressFields) {
-        addressFields.style.display = deliveryType === "entrega" ? "block" : "none";
-    }
+    document.getElementById("address-fields").style.display = document.getElementById("delivery-type").value === "entrega" ? "block" : "none";
     updateCart();
 }
 
 function toggleTrocoField() {
-    const paymentMethod = document.getElementById("payment-method").value;
-    const trocoField = document.getElementById("troco-field");
-    if(trocoField) {
-        trocoField.style.display = paymentMethod === "Dinheiro" ? "block" : "none";
-    }
+    document.getElementById("troco-field").style.display = document.getElementById("payment-method").value === "Dinheiro" ? "block" : "none";
 }
 
 function finishOrder() {
   if (cart.length === 0) return alert("Sua sacola está vazia!");
   
-  let textoFinal = "PEDIDO - LC BURGERS\n";
-  textoFinal += "--------------------------\n\n";
+  let textoFinal = "*🍔 PEDIDO - LC BURGERS*\n";
+  textoFinal += "------------------------------------------\n\n";
 
   cart.forEach(i => {
-    textoFinal += `ITEM: ${i.name}\n`;
+    textoFinal += `✅ *${i.qty}x ${i.name}*\n`;
     if (i.extras.length > 0) {
-      textoFinal += `ADICIONAIS: ${i.extras.map(e => e.name).join(', ')}\n`;
+      textoFinal += `   + Adicionais: ${i.extras.map(e => e.name).join(', ')}\n`;
     }
     if (i.obs) {
-      textoFinal += `OBS: ${i.obs}\n`;
+      textoFinal += `   📝 Obs: ${i.obs}\n`;
     }
-    textoFinal += `VALOR: R$ ${i.totalPrice.toFixed(2)}\n\n`;
+    textoFinal += `   *Valor: R$ ${i.totalPrice.toFixed(2)}*\n\n`;
   });
 
-  textoFinal += "--------------------------\n";
+  textoFinal += "------------------------------------------\n";
   
   const deliveryType = document.getElementById("delivery-type").value;
   if (deliveryType === "entrega") {
-    textoFinal += "FORMA DE ENTREGA: Entrega no Endereco\n";
-    textoFinal += `ENDERECO: ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
-    textoFinal += `BAIRRO: ${document.getElementById("cart-vila").value}\n`;
-    textoFinal += `TIPO: ${document.getElementById("home-type").value}\n`;
+    textoFinal += "📍 *FORMA DE ENTREGA:* Entrega\n";
+    textoFinal += `🏠 *ENDEREÇO:* ${document.getElementById("cart-rua").value}, ${document.getElementById("cart-numero").value}\n`;
+    textoFinal += `🏘️ *BAIRRO:* ${document.getElementById("cart-vila").value}\n`;
+    textoFinal += `🏢 *TIPO:* ${document.getElementById("home-type").value}\n`;
   } else { 
-    textoFinal += "FORMA DE ENTREGA: Retirada no Balcao\n"; 
+    textoFinal += "🏪 *FORMA DE ENTREGA:* Retirada no Balcão\n"; 
   }
 
   const subtotal = cart.reduce((a, b) => a + b.totalPrice, 0);
   const taxa = deliveryType === "entrega" ? 5 : 0;
+  const totalGeral = subtotal + taxa;
   
-  textoFinal += `\nFORMA DE PAGAMENTO: ${document.getElementById("payment-method").value}\n`;
-  textoFinal += `TOTAL DO PEDIDO: R$ ${(subtotal + taxa).toFixed(2)}`;
+  const pagamento = document.getElementById("payment-method").value;
+  textoFinal += `\n💳 *FORMA DE PAGAMENTO:* ${pagamento}\n`;
+
+  // Lógica do Troco
+  if (pagamento === "Dinheiro") {
+    const valorPago = parseFloat(document.getElementById("cart-troco").value);
+    if (!isNaN(valorPago) && valorPago > totalGeral) {
+        textoFinal += `💵 *TROCO PARA:* R$ ${valorPago.toFixed(2)}\n`;
+        textoFinal += `💰 *VALOR DO TROCO:* R$ ${(valorPago - totalGeral).toFixed(2)}\n`;
+    } else if (valorPago === totalGeral) {
+        textoFinal += `💵 *PAGO EM DINHEIRO:* (Sem troco)\n`;
+    }
+  }
+
+  textoFinal += `\n*TOTAL DO PEDIDO: R$ ${totalGeral.toFixed(2)}*`;
 
   window.open(`https://wa.me/5543988230563?text=${encodeURIComponent(textoFinal)}`);
 }
