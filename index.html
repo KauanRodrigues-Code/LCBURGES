@@ -56,6 +56,11 @@
     <div class="cart-items" id="cart-items"></div>
     <div class="cart-extra-fields">
         <div class="cart-section-card">
+            <h3>👤 Identificação</h3>
+            <input type="text" id="cart-nome" placeholder="Digite seu nome completo" required>
+        </div>
+
+        <div class="cart-section-card">
             <h3>📍 Entrega</h3>
             <select id="delivery-type" onchange="toggleDeliveryFields()">
                 <option value="entrega">Preciso de Entrega (Taxa R$ 7,00)</option>
@@ -63,9 +68,9 @@
             </select>
             <div id="address-fields">
                 <input type="text" id="cart-rua" placeholder="Nome da Rua">
-                <div class="input-row">
-                    <input type="text" id="cart-numero" placeholder="Nº">
-                    <input type="text" id="cart-vila" placeholder="Vila / Bairro">
+                <div class="input-row" style="display: flex; gap: 5px;">
+                    <input type="text" id="cart-numero" placeholder="Nº" style="width: 30%;">
+                    <input type="text" id="cart-vila" placeholder="Vila / Bairro" style="width: 70%;">
                 </div>
                 <select id="home-type">
                     <option value="Casa">Casa</option>
