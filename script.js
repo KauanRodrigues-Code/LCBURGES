@@ -42,13 +42,12 @@ let cart = [];
 let currentCategory = "tradicionais";
 let selectedProduct = null;
 
-// --- SISTEMA DE HORÁRIO ---
 function isStoreOpen() {
     const data = new Date();
     const hora = data.getHours();
     const dia = data.getDay(); 
     if (dia === 1) return false; 
-    return (hora >= 18 && hora < 24) || (hora >= 0 && hora < 1); // Aberto até 1h da manhã para garantir
+    return (hora >= 18 && hora < 24) || (hora >= 0 && hora < 1);
 }
 
 function updateStoreStatus() {
@@ -63,7 +62,6 @@ function updateStoreStatus() {
     }
 }
 
-// --- CARRINHO ---
 function toggleCart() { 
     const cartEl = document.getElementById("cart");
     const statusBar = document.getElementById("status-bar");
@@ -75,7 +73,6 @@ function toggleCart() {
     }
 }
 
-// --- PRODUTOS ---
 function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
@@ -106,7 +103,6 @@ function renderProducts() {
   });
 }
 
-// --- MODAL ---
 function openProductModal(id) {
     selectedProduct = productsData.find(p => p.id === id);
     document.getElementById("modal-obs").value = "";
@@ -148,9 +144,7 @@ function addToCartFromModal() {
     const selectedExtras = Array.from(document.querySelectorAll('.extra-check:checked')).map(el => ({
         name: el.value, price: parseFloat(el.getAttribute('data-price'))
     }));
-    
     const itemTotal = selectedProduct.price + selectedExtras.reduce((a,b)=>a+b.price, 0);
-    
     cart.push({ 
         ...selectedProduct, 
         cartId: Date.now(), 
@@ -159,12 +153,10 @@ function addToCartFromModal() {
         totalPrice: itemTotal, 
         qty: 1 
     });
-    
     updateCart(); 
     closeModal();
 }
 
-// --- ATUALIZAÇÃO DO CARRINHO ---
 function updateCart() {
   const itemsDiv = document.getElementById("cart-items");
   itemsDiv.innerHTML = "";
@@ -172,10 +164,7 @@ function updateCart() {
 
   cart.forEach(item => {
     subtotal += item.totalPrice;
-    
-    // Lista os extras para mostrar no carrinho
     let extrasNomes = item.extras.length > 0 ? `<br><small>+ ${item.extras.map(e => e.name).join(', ')}</small>` : "";
-    
     itemsDiv.innerHTML += `
       <div class="cart-item-card">
         <div>
@@ -188,7 +177,6 @@ function updateCart() {
 
   const deliveryType = document.getElementById("delivery-type").value;
   const taxaEntrega = deliveryType === "entrega" ? 7 : 0;
-  
   document.getElementById("cart-count").innerText = cart.length;
   document.getElementById("cart-total").innerHTML = `<h3>Total: R$ ${(subtotal + taxaEntrega).toFixed(2)}</h3>`;
 }
@@ -217,82 +205,68 @@ function toggleTrocoField() {
     document.getElementById("troco-field").style.display = document.getElementById("payment-method").value === "Dinheiro" ? "block" : "none";
 }
 
-// --- FUNÇÃO FINAL DE ENVIO WHATSAPP ---
 function finishOrder() {
   if (!isStoreOpen()) {
       alert("❌ Desculpe, estamos fechados no momento!");
       return;
   }
   
+  const nomeCliente = document.getElementById("cart-nome").value;
+  if (!nomeCliente || nomeCliente.trim() === "") {
+      alert("Por favor, preencha seu nome!");
+      document.getElementById("cart-nome").focus();
+      return;
+  }
+
   if (cart.length === 0) {
       alert("Sua sacola está vazia!");
       return;
   }
 
   let textoFinal = "*🍔 NOVO PEDIDO - LC BURGERS*\n";
+  textoFinal += "------------------------------------------\n";
+  textoFinal += `👤 *CLIENTE:* ${nomeCliente}\n`;
   textoFinal += "------------------------------------------\n\n";
 
   cart.forEach(item => {
     textoFinal += `✅ *${item.qty}x ${item.name}*\n`;
-    
-    if (item.extras && item.extras.length > 0) {
-      textoFinal += `   ➕ *Extras:* ${item.extras.map(e => e.name).join(', ')}\n`;
-    }
-    
-    if (item.obs && item.obs.trim() !== "") {
-      textoFinal += `   📝 *Obs:* ${item.obs}\n`;
-    }
-    
+    if (item.extras?.length > 0) textoFinal += `   ➕ *Extras:* ${item.extras.map(e => e.name).join(', ')}\n`;
+    if (item.obs?.trim()) textoFinal += `   📝 *Obs:* ${item.obs}\n`;
     textoFinal += `   💰 R$ ${item.totalPrice.toFixed(2)}\n\n`;
   });
 
   textoFinal += "------------------------------------------\n";
   
   const deliveryType = document.getElementById("delivery-type").value;
-  
   if (deliveryType === "entrega") {
     const rua = document.getElementById("cart-rua").value;
     const num = document.getElementById("cart-numero").value;
-    const bairro = document.getElementById("cart-vila").value; // Bairro
-    const tipo = document.getElementById("home-type").value;
-    const ref = document.getElementById("cart-ponto-ref").value;
-
-    if (!rua || !num || !bairro) {
-        alert("Por favor, preencha o endereço completo!");
-        return;
-    }
-
+    const bairro = document.getElementById("cart-vila").value;
+    if (!rua || !num || !bairro) { alert("Preencha o endereço completo!"); return; }
     textoFinal += "📍 *ENTREGA*\n";
-    textoFinal += `🏠 *Endereço:* ${rua}, ${num}\n`;
-    textoFinal += `🏘️ *Bairro:* ${bairro}\n`;
-    textoFinal += `🏢 *Tipo:* ${tipo}\n`;
+    textoFinal += `🏠 *End:* ${rua}, ${num}\n🏘️ *Bairro:* ${bairro}\n🏢 *Tipo:* ${document.getElementById("home-type").value}\n`;
+    const ref = document.getElementById("cart-ponto-ref").value;
     if(ref) textoFinal += `📍 *Ref:* ${ref}\n`;
   } else {
     textoFinal += "🏪 *RETIRADA NO BALCÃO*\n";
   }
 
-  const subtotalGeral = cart.reduce((acc, obj) => acc + obj.totalPrice, 0);
-  const taxaEntrega = deliveryType === "entrega" ? 7 : 0;
-  const totalGeral = subtotalGeral + taxaEntrega;
-  
+  const subtotal = cart.reduce((acc, obj) => acc + obj.totalPrice, 0);
+  const totalGeral = subtotal + (deliveryType === "entrega" ? 7 : 0);
   const pagamento = document.getElementById("payment-method").value;
   textoFinal += `\n💳 *PAGAMENTO:* ${pagamento}\n`;
 
   if (pagamento === "Dinheiro") {
-    const valorTrocoPara = parseFloat(document.getElementById("cart-troco").value);
-    if (!isNaN(valorTrocoPara) && valorTrocoPara > totalGeral) {
-        textoFinal += `💵 *Troco para:* R$ ${valorTrocoPara.toFixed(2)}\n`;
-        textoFinal += `🪙 *Levar:* R$ ${(valorTrocoPara - totalGeral).toFixed(2)}\n`;
+    const trocoPara = parseFloat(document.getElementById("cart-troco").value);
+    if (trocoPara > totalGeral) {
+        textoFinal += `💵 *Troco para:* R$ ${trocoPara.toFixed(2)}\n🪙 *Levar:* R$ ${(trocoPara - totalGeral).toFixed(2)}\n`;
     }
   }
 
   textoFinal += `\n*TOTAL: R$ ${totalGeral.toFixed(2)}*`;
-
-  const fone = "5543999225202";
-  window.open(`https://wa.me/${fone}?text=${encodeURIComponent(textoFinal)}`);
+  window.open(`https://wa.me/5543999225202?text=${encodeURIComponent(textoFinal)}`);
 }
 
-// --- INICIALIZAÇÃO ---
 document.addEventListener("DOMContentLoaded", () => { 
     updateStoreStatus(); 
     renderProducts(); 
