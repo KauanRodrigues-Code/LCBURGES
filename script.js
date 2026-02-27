@@ -23,7 +23,7 @@ const productsData = [
 ];
 
 const extrasData = [
-    { name: "Frango Empanado", price: 12.00 }, { name: "Hambúrguer de Linguiça", price: 10.00 },
+    { name: "Hambúrguer de Linguiça", price: 10.00 },
     { name: "Hambúrguer Tradicional", price: 8.00 }, { name: "Hambúrguer Gourmet", price: 10.00 },
     { name: "Cheddar", price: 4.00 }, { name: "Queijo Mussarela", price: 3.00 },
     { name: "Queijo Coalho", price: 5.00 }, { name: "Queijo Coalho c/ Mel", price: 6.00 },
